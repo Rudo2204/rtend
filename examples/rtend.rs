@@ -16,7 +16,7 @@ fn main() {
             list::list(list_matches);
         }
 
-        ("init", Some(init_matches)) => {
+        ("init", Some(_init_matches)) => {
             if utils::check_first_time() {
                 utils::create_new_db(true).unwrap();
             } else if !utils::check_database_exists() {
