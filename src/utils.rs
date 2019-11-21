@@ -51,7 +51,7 @@ pub fn create_new_db(first_time: bool) -> rusqlite::Result<()> {
 
     conn.execute(
         "CREATE TABLE snippet (
-            id integer primary key autoincrement,
+            id integer primary key,
             entity_id integer references entity(id),
             data text not null,
             created datetime not null default current_timestamp,
@@ -62,7 +62,7 @@ pub fn create_new_db(first_time: bool) -> rusqlite::Result<()> {
 
     conn.execute(
         "CREATE TABLE alias (
-            id integer primary key autoincrement,
+            id integer primary key,
             entity_id integer references entity(id),
             name varchar(255) not null,
             created datetime not null default current_timestamp,
@@ -73,7 +73,7 @@ pub fn create_new_db(first_time: bool) -> rusqlite::Result<()> {
 
     conn.execute(
         "CREATE TABLE relation (
-            id integer primary key autoincrement,
+            id integer primary key,
             entity_id_a integer not null references entity(id),
             entity_id_b integer not null references entity(id),
             created datetime not null default current_timestamp,
@@ -84,7 +84,7 @@ pub fn create_new_db(first_time: bool) -> rusqlite::Result<()> {
 
     conn.execute(
         "CREATE TABLE relation_snippet (
-            id integer primary key autoincrement,
+            id integer primary key,
             relation_id integer not null references entity(id),
             date text not null,
             created datetime not null default current_timestamp,
