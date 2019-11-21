@@ -35,16 +35,19 @@ subcommands:
                 long: entity
                 value_name: name
                 takes_value: true
+                conflicts_with:
+                    - add_alias
             - add_alias:
                 help: add an alias to an entity
                 short: a
                 long: alias
                 value_names:
-                    - id
+                    - entity_id
                     - name
                 takes_value: true
                 min_values: 2
-
+                conflicts_with:
+                    - add_entity
         settings:
             - ArgRequiredElseHelp
     - list:
