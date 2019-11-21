@@ -1,0 +1,30 @@
+use clap::{load_yaml, App};
+use std::unreachable;
+
+use rtend::{add, list, utils};
+
+fn main() {
+    let yml = load_yaml!("../src/rtend-yaml.yml");
+    let matches = App::from_yaml(yml).get_matches();
+
+    match matches.subcommand() {
+        ("add", Some(add_matches)) => {
+            add::add(add_matches);
+        }
+
+        ("list", Some(list_matches)) => {
+            list::list(list_matches);
+        }
+
+        ("init", Some(init_matches)) => {
+            if utils::check_first_time() {
+                utils::create_new_db(true).unwrap();
+            } else if !utils::check_database_exists() {
+                utils::create_new_db(false).unwrap();
+            }
+        }
+
+        ("", None) => println!("Run the program with --help to get started"),
+        _ => unreachable!(),
+    }
+}

@@ -1,0 +1,59 @@
+name: rtend
+version: "0.1.0"
+about: simple cli note taking program
+author: rudo2204 <rudo2204@gmail.com>
+
+# Global AppSettings
+settings:
+    - DisableHelpSubcommand
+    - SubcommandRequiredElseHelp
+
+subcommands:
+    - init:
+        about: initialize the database
+        args:
+            - from_scratch:
+                help: initialize from scratch
+                short: n
+                long: from-scratch
+                conflicts_with:
+                    - from_backup
+            - from_backup:
+                help: initialize from backup
+                short: b
+                long: from-backup
+                value_name: path
+                takes_value: true
+        settings:
+            - ArgRequiredElseHelp
+    - add:
+        about: add things
+        args:
+            - add_entity:
+                help: add a new entity
+                short: e
+                long: entity
+                value_name: name
+                takes_value: true
+            - add_alias:
+                help: add an alias to an entity
+                short: a
+                long: alias
+                value_names:
+                    - id
+                    - name
+                takes_value: true
+                min_values: 2
+
+        settings:
+            - ArgRequiredElseHelp
+    - list:
+        about: list things
+        args:
+            - list_entity:
+                help: list an id
+                long: id
+                value_name: id
+                takes_value: true
+        settings:
+            - ArgRequiredElseHelp
