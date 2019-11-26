@@ -40,6 +40,7 @@ subcommands:
                 conflicts_with:
                     - add_alias
                     - add_relation
+                    - add_snippet
             - add_alias:
                 help: add an alias to an entity
                 short: a
@@ -52,18 +53,30 @@ subcommands:
                 conflicts_with:
                     - add_entity
                     - add_relation
+                    - add_snippet
             - add_relation:
                 help: add a relation between two entities
                 short: r
                 long: relation
                 value_names:
-                    - id_a
-                    - id_b
+                    - entity_id_a
+                    - entity_id_b
                 takes_value: true
                 min_values: 2
                 conflicts_with:
                     - add_entity
                     - add_alias
+                    - add_snippet
+            - add_snippet:
+                help: add a snippet to an entity
+                short: s
+                long: snippet
+                value_name: entity_id
+                takes_value: true
+                conflicts_with:
+                    - add_entity
+                    - add_alias
+                    - add_relation
     - list:
         about: list things
         args:

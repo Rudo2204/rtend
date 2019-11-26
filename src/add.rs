@@ -1,6 +1,7 @@
+use atty::{is, Stream};
 use clap::ArgMatches;
-use rusqlite;
-use rusqlite::{params, Connection, NO_PARAMS};
+use rusqlite::{self, params, Connection, NO_PARAMS};
+use std::io::{self, Read};
 use std::{process, str::FromStr};
 
 use crate::utils;
@@ -55,6 +56,19 @@ pub fn add(args: &ArgMatches) {
                 process::exit(1);
             }
         }
+    } else if args.is_present("add_snippet") {
+        let entity_id =
+            i32::from_str(args.value_of("add_snippet").unwrap()).unwrap_or_else(|_err| {
+                eprintln!("entity_id must be an i32");
+                process::exit(1);
+            });
+        match add_new_snippet(entity_id) {
+            Ok(()) => println!("new data snippet added to entity id `{}`", entity_id),
+            Err(e) => {
+                eprintln!("Could not add data to entity, error: {}", e);
+                process::exit(1);
+            }
+        }
     }
 }
 
@@ -106,6 +120,41 @@ fn add_relation_two_entities(id_a: i32, id_b: i32) -> rusqlite::Result<()> {
                  (?1, ?2)",
         params![id_a, id_b],
     )?;
+
+    Ok(())
+}
+
+fn add_new_snippet(entity_id: i32) -> rusqlite::Result<()> {
+    if !utils::check_database_exists() {
+        eprintln!("database does not exist, please run the subcommand init");
+        process::exit(1);
+    }
+
+    // Check if Stdin pipe is open, if it is then these messages will be omitted
+    if is(Stream::Stdin) {
+        if cfg!(taget_os = "windows") {
+            println!("[Type in data for snippet - Termiate by Ctrl-Z and Return (Enter)]");
+        } else {
+            println!("[Type in data for snippet - Termiate by Return (Enter) and Ctrl-D]");
+        }
+    }
+
+    let mut data = String::new();
+    match io::stdin().read_to_string(&mut data) {
+        Ok(_) => {
+            let conn = Connection::open(&utils::find_data_dir().unwrap().join("notes.db"))?;
+
+            conn.execute(
+                "INSERT INTO snippet (data, entity_id) VALUES (?1, ?2)",
+                params![data, entity_id],
+            )?;
+        }
+
+        Err(err) => {
+            eprintln!("Something went wrong reading input! Error: {}", err);
+            process::exit(1);
+        }
+    }
 
     Ok(())
 }
