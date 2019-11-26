@@ -1,38 +1,41 @@
 name: rtend
 version: "0.1.0"
-about: simple cli note taking program
+about: Simple cli note taking program
 author: rudo2204 <rudo2204@gmail.com>
 
 # Global AppSettings
 settings:
     - DisableHelpSubcommand
     - SubcommandRequiredElseHelp
+    - GlobalVersion
 
 subcommands:
     - init:
-        about: initialize the database
+        about: Initializes the database
         settings:
             - ArgRequiredElseHelp
+            - DisableVersion
         args:
             - from_scratch:
-                help: initialize from scratch
+                help: Initializes from scratch
                 short: n
                 long: from-scratch
                 conflicts_with:
                     - from_backup
             - from_backup:
-                help: initialize from backup
+                help: Initializes from backup
                 short: b
                 long: from-backup
                 value_name: path
                 takes_value: true
     - add:
-        about: add things
+        about: Adds new things
         settings:
             - ArgRequiredElseHelp
+            - DisableVersion
         args:
             - add_entity:
-                help: add a new entity
+                help: Adds a new entity
                 short: e
                 long: entity
                 value_name: name
@@ -42,7 +45,7 @@ subcommands:
                     - add_relation
                     - add_snippet
             - add_alias:
-                help: add an alias to an entity
+                help: Adds an alias to an entity
                 short: a
                 long: alias
                 value_names:
@@ -56,7 +59,7 @@ subcommands:
                     - add_snippet
                     - add_relation_snippet
             - add_relation:
-                help: add a relation between two entities
+                help: Adds a relation between two entities
                 short: r
                 long: relation
                 value_names:
@@ -70,7 +73,7 @@ subcommands:
                     - add_snippet
                     - add_relation_snippet
             - add_snippet:
-                help: add a snippet to an entity
+                help: Adds a snippet to an entity
                 short: s
                 long: snippet
                 value_name: entity_id
@@ -81,7 +84,7 @@ subcommands:
                     - add_relation
                     - add_relation_snippet
             - add_relation_snippet:
-                help: add a snippet to a relation
+                help: Adds a snippet to a relation
                 long: relation-snippet
                 value_name: relation_id
                 takes_value: true
@@ -91,13 +94,20 @@ subcommands:
                     - add_relation
                     - add_snippet
     - list:
-        about: list things
+        about: Lists information about things
+        settings:
+            - ArgRequiredElseHelp
+            - DisableVersion
         args:
+            - verbose:
+                help: Increases verbosity level
+                short: v
+                long: verbose
+                requires:
+                    - list_entity
             - list_entity:
-                help: list an id
-                short: e
+                help: Lists information about an entity
+                short: l
                 long: entity
                 value_name: id
                 takes_value: true
-        settings:
-            - ArgRequiredElseHelp
