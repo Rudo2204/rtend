@@ -65,7 +65,20 @@ pub fn add(args: &ArgMatches) {
         match add_new_snippet(entity_id) {
             Ok(()) => println!("new data snippet added to entity id `{}`", entity_id),
             Err(e) => {
-                eprintln!("Could not add data to entity, error: {}", e);
+                eprintln!("Could not add snippet to entity, error: {}", e);
+                process::exit(1);
+            }
+        }
+    } else if args.is_present("add_relation_snippet") {
+        let relation_id = i32::from_str(args.value_of("add_relation_snippet").unwrap())
+            .unwrap_or_else(|_err| {
+                eprintln!("relation_id must be an i32");
+                process::exit(1);
+            });
+        match add_relation_snippet(relation_id) {
+            Ok(()) => println!("new data snippet added to relation id `{}`", relation_id),
+            Err(e) => {
+                eprintln!("Could not add snippet to relation_snippet, error: {}", e);
                 process::exit(1);
             }
         }
@@ -147,6 +160,41 @@ fn add_new_snippet(entity_id: i32) -> rusqlite::Result<()> {
             conn.execute(
                 "INSERT INTO snippet (data, entity_id) VALUES (?1, ?2)",
                 params![data, entity_id],
+            )?;
+        }
+
+        Err(err) => {
+            eprintln!("Something went wrong reading input! Error: {}", err);
+            process::exit(1);
+        }
+    }
+
+    Ok(())
+}
+
+fn add_relation_snippet(relation_id: i32) -> rusqlite::Result<()> {
+    if !utils::check_database_exists() {
+        eprintln!("database does not exist, please run the subcommand init");
+        process::exit(1);
+    }
+
+    // Check if Stdin pipe is open, if it is then these messages will be omitted
+    if is(Stream::Stdin) {
+        if cfg!(taget_os = "windows") {
+            println!("[Type in data for snippet - Termiate by Ctrl-Z and Return (Enter)]");
+        } else {
+            println!("[Type in data for snippet - Termiate by Return (Enter) and Ctrl-D]");
+        }
+    }
+
+    let mut data = String::new();
+    match io::stdin().read_to_string(&mut data) {
+        Ok(_) => {
+            let conn = Connection::open(&utils::find_data_dir().unwrap().join("notes.db"))?;
+
+            conn.execute(
+                "INSERT INTO relation_snippet (data, relation_id) VALUES (?1, ?2)",
+                params![data, relation_id],
             )?;
         }
 
