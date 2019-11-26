@@ -11,6 +11,8 @@ settings:
 subcommands:
     - init:
         about: initialize the database
+        settings:
+            - ArgRequiredElseHelp
         args:
             - from_scratch:
                 help: initialize from scratch
@@ -24,10 +26,10 @@ subcommands:
                 long: from-backup
                 value_name: path
                 takes_value: true
-        settings:
-            - ArgRequiredElseHelp
     - add:
         about: add things
+        settings:
+            - ArgRequiredElseHelp
         args:
             - add_entity:
                 help: add a new entity
@@ -37,6 +39,7 @@ subcommands:
                 takes_value: true
                 conflicts_with:
                     - add_alias
+                    - add_relation
             - add_alias:
                 help: add an alias to an entity
                 short: a
@@ -48,14 +51,26 @@ subcommands:
                 min_values: 2
                 conflicts_with:
                     - add_entity
-        settings:
-            - ArgRequiredElseHelp
+                    - add_relation
+            - add_relation:
+                help: add a relation between two entities
+                short: r
+                long: relation
+                value_names:
+                    - id_a
+                    - id_b
+                takes_value: true
+                min_values: 2
+                conflicts_with:
+                    - add_entity
+                    - add_alias
     - list:
         about: list things
         args:
             - list_entity:
                 help: list an id
-                long: id
+                short: e
+                long: entity
                 value_name: id
                 takes_value: true
         settings:
