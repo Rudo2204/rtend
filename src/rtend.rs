@@ -4,7 +4,7 @@ use std::unreachable;
 use rtend::{add, list, utils};
 
 fn main() {
-    let yml = load_yaml!("../src/rtend-yaml.yml");
+    let yml = load_yaml!("rtend/rtend-yaml.yml");
     let matches = App::from_yaml(yml).get_matches();
 
     match matches.subcommand() {
