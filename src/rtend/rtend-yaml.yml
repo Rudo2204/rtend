@@ -103,11 +103,12 @@ subcommands:
                 help: Increases verbosity level
                 short: v
                 long: verbose
+                multiple: true
                 requires:
                     - list_entity
             - list_entity:
                 help: Lists information about an entity
-                short: l
+                short: e
                 long: entity
                 value_name: id
                 takes_value: true
