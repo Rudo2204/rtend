@@ -7,6 +7,14 @@ pub fn check_database_exists() -> bool {
     find_data_dir().unwrap().join("notes.db").exists()
 }
 
+pub fn trim_trailing_newline(s: &mut String) -> String {
+    while s.ends_with('\n') || s.ends_with('\r') {
+        s.pop().unwrap();
+    }
+
+    s.to_string()
+}
+
 pub fn check_first_time() -> bool {
     let rtend_data_dir = find_data_dir().unwrap_or_else(|err| {
         eprintln!("{}", err);
