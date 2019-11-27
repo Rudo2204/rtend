@@ -85,6 +85,7 @@ subcommands:
                     - add_relation_snippet
             - add_relation_snippet:
                 help: Adds a snippet to a relation
+                short: d
                 long: relation-snippet
                 value_name: relation_id
                 takes_value: true
