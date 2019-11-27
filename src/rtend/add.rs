@@ -18,8 +18,8 @@ pub fn add(args: &ArgMatches) {
         }
     } else if args.is_present("add_alias") {
         let alias_args: Vec<_> = args.values_of("add_alias").unwrap().collect();
-        let entity_id = i32::from_str(alias_args[0]).unwrap_or_else(|_err| {
-            eprintln!("entity_id must be an i32");
+        let entity_id = u32::from_str(alias_args[0]).unwrap_or_else(|_err| {
+            eprintln!("entity_id must be an u32");
             process::exit(1);
         });
 
@@ -36,13 +36,13 @@ pub fn add(args: &ArgMatches) {
     } else if args.is_present("add_relation") {
         let alias_args: Vec<_> = args.values_of("add_relation").unwrap().collect();
 
-        let entity_id_a = i32::from_str(alias_args[0]).unwrap_or_else(|_err| {
-            eprintln!("entity_id must be an i32");
+        let entity_id_a = u32::from_str(alias_args[0]).unwrap_or_else(|_err| {
+            eprintln!("entity_id must be an u32");
             process::exit(1);
         });
 
-        let entity_id_b = i32::from_str(alias_args[1]).unwrap_or_else(|_err| {
-            eprintln!("entity_id must be an i32");
+        let entity_id_b = u32::from_str(alias_args[1]).unwrap_or_else(|_err| {
+            eprintln!("entity_id must be an u32");
             process::exit(1);
         });
 
@@ -58,8 +58,8 @@ pub fn add(args: &ArgMatches) {
         }
     } else if args.is_present("add_snippet") {
         let entity_id =
-            i32::from_str(args.value_of("add_snippet").unwrap()).unwrap_or_else(|_err| {
-                eprintln!("entity_id must be an i32");
+            u32::from_str(args.value_of("add_snippet").unwrap()).unwrap_or_else(|_err| {
+                eprintln!("entity_id must be an u32");
                 process::exit(1);
             });
         match add_new_snippet(entity_id) {
@@ -70,9 +70,9 @@ pub fn add(args: &ArgMatches) {
             }
         }
     } else if args.is_present("add_relation_snippet") {
-        let relation_id = i32::from_str(args.value_of("add_relation_snippet").unwrap())
+        let relation_id = u32::from_str(args.value_of("add_relation_snippet").unwrap())
             .unwrap_or_else(|_err| {
-                eprintln!("relation_id must be an i32");
+                eprintln!("relation_id must be an u32");
                 process::exit(1);
             });
         match add_relation_snippet(relation_id) {
@@ -85,7 +85,7 @@ pub fn add(args: &ArgMatches) {
     }
 }
 
-fn add_alias_to_entity(entity_id: i32, name: &str) -> rusqlite::Result<()> {
+fn add_alias_to_entity(entity_id: u32, name: &str) -> rusqlite::Result<()> {
     if !utils::check_database_exists() {
         eprintln!("database does not exist, please run the subcommand init");
         process::exit(1);
@@ -120,7 +120,7 @@ fn add_new_entity(name: &str) -> rusqlite::Result<()> {
     Ok(())
 }
 
-fn add_relation_two_entities(id_a: i32, id_b: i32) -> rusqlite::Result<()> {
+fn add_relation_two_entities(id_a: u32, id_b: u32) -> rusqlite::Result<()> {
     if !utils::check_database_exists() {
         eprintln!("database does not exist, please run the subcommand init");
         process::exit(1);
@@ -137,7 +137,7 @@ fn add_relation_two_entities(id_a: i32, id_b: i32) -> rusqlite::Result<()> {
     Ok(())
 }
 
-fn add_new_snippet(entity_id: i32) -> rusqlite::Result<()> {
+fn add_new_snippet(entity_id: u32) -> rusqlite::Result<()> {
     if !utils::check_database_exists() {
         eprintln!("database does not exist, please run the subcommand init");
         process::exit(1);
@@ -173,7 +173,7 @@ fn add_new_snippet(entity_id: i32) -> rusqlite::Result<()> {
     Ok(())
 }
 
-fn add_relation_snippet(relation_id: i32) -> rusqlite::Result<()> {
+fn add_relation_snippet(relation_id: u32) -> rusqlite::Result<()> {
     if !utils::check_database_exists() {
         eprintln!("database does not exist, please run the subcommand init");
         process::exit(1);
