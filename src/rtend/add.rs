@@ -155,12 +155,7 @@ fn add_new_snippet(entity_id: i32) -> rusqlite::Result<()> {
     let mut data = String::new();
     match io::stdin().read_to_string(&mut data) {
         Ok(_) => {
-            let conn = Connection::open(&utils::find_data_dir().unwrap().join("notes.db"))?;
-
-            conn.execute(
-                "INSERT INTO snippet (data, entity_id) VALUES (?1, ?2)",
-                params![data, entity_id],
-            )?;
+            data = utils::trim_trailing_newline(&mut data);
         }
 
         Err(err) => {
@@ -168,6 +163,12 @@ fn add_new_snippet(entity_id: i32) -> rusqlite::Result<()> {
             process::exit(1);
         }
     }
+
+    let conn = Connection::open(&utils::find_data_dir().unwrap().join("notes.db"))?;
+    conn.execute(
+        "INSERT INTO snippet (data, entity_id) VALUES (?1, ?2)",
+        params![data, entity_id],
+    )?;
 
     Ok(())
 }
@@ -190,12 +191,7 @@ fn add_relation_snippet(relation_id: i32) -> rusqlite::Result<()> {
     let mut data = String::new();
     match io::stdin().read_to_string(&mut data) {
         Ok(_) => {
-            let conn = Connection::open(&utils::find_data_dir().unwrap().join("notes.db"))?;
-
-            conn.execute(
-                "INSERT INTO relation_snippet (data, relation_id) VALUES (?1, ?2)",
-                params![data, relation_id],
-            )?;
+            data = utils::trim_trailing_newline(&mut data);
         }
 
         Err(err) => {
@@ -203,6 +199,12 @@ fn add_relation_snippet(relation_id: i32) -> rusqlite::Result<()> {
             process::exit(1);
         }
     }
+
+    let conn = Connection::open(&utils::find_data_dir().unwrap().join("notes.db"))?;
+    conn.execute(
+        "INSERT INTO relation_snippet (data, relation_id) VALUES (?1, ?2)",
+        params![data, relation_id],
+    )?;
 
     Ok(())
 }
