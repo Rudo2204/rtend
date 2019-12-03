@@ -1,7 +1,10 @@
 use clap::ArgMatches;
 use rusqlite::{self, params, Connection};
-use std::{process, str::FromStr};
-use time;
+use std::{
+    io::{self, Write},
+    process,
+    str::FromStr,
+};
 
 use crate::item;
 use crate::utils;
@@ -42,13 +45,12 @@ fn list_entity(entity_id: u32, verbosity_level: u64) -> rusqlite::Result<()> {
             })
         })?;
 
+        let mut stdout = io::BufWriter::new(io::stdout());
+        let row = "-".repeat(34);
         for entity in entity_iter {
             let tmp = entity.unwrap();
-            println!(
-                "Found id {}, created at {}",
-                tmp.id,
-                time::at(tmp.created).rfc3339()
-            );
+            tmp.print_header(&mut stdout, &row).unwrap();
+            writeln!(stdout, "{}", tmp).unwrap();
         }
 
     // Equal to list entity long
@@ -72,16 +74,12 @@ fn list_entity(entity_id: u32, verbosity_level: u64) -> rusqlite::Result<()> {
             })
         })?;
 
+        let mut stdout = io::BufWriter::new(io::stdout());
+        let row = "-".repeat(80);
         for entity in entity_iter {
             let tmp = entity.unwrap();
-            println!(
-                "Found id {}, alias_list {}, alias_count {}, snippet_count {}, created at {}",
-                tmp.id,
-                tmp.alias_list,
-                tmp.alias_count,
-                tmp.snippet_count,
-                time::at(tmp.created).rfc3339()
-            );
+            tmp.print_header(&mut stdout, &row).unwrap();
+            writeln!(stdout, "{}", tmp).unwrap();
         }
 
     // Equal to list entity long long
@@ -95,7 +93,7 @@ fn list_entity(entity_id: u32, verbosity_level: u64) -> rusqlite::Result<()> {
             SELECT id, 's', data, updated from snippet where entity_id = (?1)
             UNION ALL
             SELECT id, 'r', (entity_id_a || ' | ' || entity_id_b) as 'a | b',
-            updated from relation where entity_id_a = (?1)
+            updated from relation where entity_id_a = (?1) or entity_id_b = (?1)
             UNION ALL
             SELECT id, 'rs', data, updated from relation_snippet
             where id in (SELECT id from relation where entity_id_a = (?1) or entity_id_b = (?1))
@@ -112,15 +110,16 @@ fn list_entity(entity_id: u32, verbosity_level: u64) -> rusqlite::Result<()> {
             })
         })?;
 
+        let mut stdout = io::BufWriter::new(io::stdout());
+        let row = "-".repeat(80);
+        let mut header_printed = false;
         for entity in entity_iter {
             let tmp = entity.unwrap();
-            println!(
-                "Found id {}, type {}, data {}, last_modified {}",
-                tmp.id,
-                tmp.data_type,
-                tmp.data,
-                time::at(tmp.last_modified).rfc3339()
-            );
+            if !header_printed {
+                tmp.print_header(&mut stdout, &row).unwrap();
+                header_printed = true;
+            }
+            writeln!(stdout, "{}", tmp).unwrap();
         }
     }
 
