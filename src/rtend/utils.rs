@@ -7,10 +7,6 @@ pub fn check_database_exists() -> bool {
     find_data_dir().unwrap().join("notes.db").exists()
 }
 
-pub fn count_remaining_lines(s: &str) -> usize {
-    s.lines().count() - 1
-}
-
 pub fn trim_trailing_newline(s: &mut String) -> String {
     while s.ends_with('\n') || s.ends_with('\r') {
         s.pop().unwrap();
@@ -97,7 +93,7 @@ pub fn create_new_db(first_time: bool) -> rusqlite::Result<()> {
     conn.execute(
         "CREATE TABLE relation_snippet (
             id integer primary key,
-            relation_id integer not null references entity(id),
+            relation_id integer not null references relation(id),
             data text not null,
             created datetime not null default current_timestamp,
             updated datetime not null default current_timestamp
