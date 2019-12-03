@@ -1,10 +1,6 @@
 use clap::ArgMatches;
 use rusqlite::{self, params, Connection};
-use std::{
-    io::{self, Write},
-    process,
-    str::FromStr,
-};
+use std::{io, process, str::FromStr};
 
 use crate::item;
 use crate::utils;
@@ -22,6 +18,34 @@ pub fn list(args: &ArgMatches) {
             Ok(()) => (),
             Err(e) => {
                 eprintln!("Could not list entity, error: {}", e);
+                process::exit(1);
+            }
+        }
+    } else if args.is_present("list_alias") {
+        let entity_id =
+            u32::from_str(args.value_of("list_alias").unwrap()).unwrap_or_else(|_err| {
+                eprintln!("entity_id must be an u32");
+                process::exit(1);
+            });
+
+        match list_alias(entity_id) {
+            Ok(()) => (),
+            Err(e) => {
+                eprintln!("Could not list alias, error: {}", e);
+                process::exit(1);
+            }
+        }
+    } else if args.is_present("list_snippet") {
+        let entity_id =
+            u32::from_str(args.value_of("list_snippet").unwrap()).unwrap_or_else(|_err| {
+                eprintln!("entity_id must be an u32");
+                process::exit(1);
+            });
+
+        match list_snippet(entity_id) {
+            Ok(()) => (),
+            Err(e) => {
+                eprintln!("Could not list alias, error: {}", e);
                 process::exit(1);
             }
         }
@@ -50,7 +74,7 @@ fn list_entity(entity_id: u32, verbosity_level: u64) -> rusqlite::Result<()> {
         for entity in entity_iter {
             let tmp = entity.unwrap();
             tmp.print_header(&mut stdout, &row).unwrap();
-            writeln!(stdout, "{}", tmp).unwrap();
+            tmp.print_content(&mut stdout).unwrap();
         }
 
     // Equal to list entity long
@@ -76,10 +100,14 @@ fn list_entity(entity_id: u32, verbosity_level: u64) -> rusqlite::Result<()> {
 
         let mut stdout = io::BufWriter::new(io::stdout());
         let row = "-".repeat(80);
+        let mut header_printed = false;
         for entity in entity_iter {
             let tmp = entity.unwrap();
-            tmp.print_header(&mut stdout, &row).unwrap();
-            writeln!(stdout, "{}", tmp).unwrap();
+            if !header_printed {
+                tmp.print_header(&mut stdout, &row).unwrap();
+                header_printed = true;
+            }
+            tmp.print_content(&mut stdout).unwrap();
         }
 
     // Equal to list entity long long
@@ -119,8 +147,73 @@ fn list_entity(entity_id: u32, verbosity_level: u64) -> rusqlite::Result<()> {
                 tmp.print_header(&mut stdout, &row).unwrap();
                 header_printed = true;
             }
-            writeln!(stdout, "{}", tmp).unwrap();
+            tmp.print_content(&mut stdout).unwrap();
         }
+    }
+
+    Ok(())
+}
+
+fn list_alias(entity_id: u32) -> rusqlite::Result<()> {
+    if !utils::check_database_exists() {
+        eprintln!("database does not exist, please run the subcommand init");
+        process::exit(1);
+    }
+    let conn = Connection::open(&utils::find_data_dir().unwrap().join("notes.db"))?;
+
+    let mut stmt = conn.prepare("SELECT id, name, updated from alias where entity_id = (?)")?;
+
+    let alias_iter = stmt.query_map(params![entity_id], |row| {
+        Ok(item::Alias {
+            id: row.get(0)?,
+            name: row.get(1)?,
+            updated: row.get(2)?,
+        })
+    })?;
+
+    let mut stdout = io::BufWriter::new(io::stdout());
+    let row = "-".repeat(80);
+    let mut header_printed = false;
+    for alias in alias_iter {
+        let tmp = alias.unwrap();
+        if !header_printed {
+            tmp.print_header(&mut stdout, &row).unwrap();
+            header_printed = true;
+        }
+        tmp.print_content(&mut stdout).unwrap();
+    }
+
+    Ok(())
+}
+
+fn list_snippet(entity_id: u32) -> rusqlite::Result<()> {
+    if !utils::check_database_exists() {
+        eprintln!("database does not exist, please run the subcommand init");
+        process::exit(1);
+    }
+    let conn = Connection::open(&utils::find_data_dir().unwrap().join("notes.db"))?;
+
+    let mut stmt =
+        conn.prepare("SELECT id, data as snippet, updated from snippet where entity_id = (?)")?;
+
+    let snippet_iter = stmt.query_map(params![entity_id], |row| {
+        Ok(item::Snippet {
+            id: row.get(0)?,
+            data: row.get(1)?,
+            updated: row.get(2)?,
+        })
+    })?;
+
+    let mut stdout = io::BufWriter::new(io::stdout());
+    let row = "-".repeat(80);
+    let mut header_printed = false;
+    for snippet in snippet_iter {
+        let tmp = snippet.unwrap();
+        if !header_printed {
+            tmp.print_header(&mut stdout, &row).unwrap();
+            header_printed = true;
+        }
+        tmp.print_content(&mut stdout).unwrap();
     }
 
     Ok(())

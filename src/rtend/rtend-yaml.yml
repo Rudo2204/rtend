@@ -105,11 +105,32 @@ subcommands:
                 short: v
                 long: verbose
                 multiple: true
-                requires:
-                    - list_entity
+                conflicts_with:
+                    - list_alias
             - list_entity:
                 help: Lists information about an entity
                 short: e
                 long: entity
-                value_name: id
+                value_name: entity_id
                 takes_value: true
+                conflicts_with:
+                    - list_alias
+                    - list_snippet
+            - list_alias:
+                help: Lists all aliases of an entity
+                short: a
+                long: alias
+                value_name: entity_id
+                takes_value: true
+                conflicts_with:
+                    - list_entity
+                    - list_snippet
+            - list_snippet:
+                help: Lists all snippets of an entity
+                short: s
+                long: snippet
+                value_name: entity_id
+                takes_value: true
+                conflicts_with:
+                    - list_entity
+                    - list_alias
