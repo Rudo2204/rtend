@@ -107,7 +107,7 @@ fn list_entity(entity_id: u32, verbosity_level: u64) -> rusqlite::Result<()> {
                 tmp.print_header(&mut stdout, &row).unwrap();
                 header_printed = true;
             }
-            tmp.print_content(&mut stdout).unwrap();
+            tmp.print_content(&mut stdout);
         }
 
     // Equal to list entity long long
@@ -147,7 +147,7 @@ fn list_entity(entity_id: u32, verbosity_level: u64) -> rusqlite::Result<()> {
                 tmp.print_header(&mut stdout, &row).unwrap();
                 header_printed = true;
             }
-            tmp.print_content(&mut stdout).unwrap();
+            tmp.print_content(&mut stdout);
         }
     }
 
@@ -213,7 +213,7 @@ fn list_snippet(entity_id: u32) -> rusqlite::Result<()> {
             tmp.print_header(&mut stdout, &row).unwrap();
             header_printed = true;
         }
-        tmp.print_content(&mut stdout).unwrap();
+        tmp.print_content(&mut stdout);
     }
 
     Ok(())

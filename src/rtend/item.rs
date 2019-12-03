@@ -1,4 +1,5 @@
 use std::io::{self, Write};
+use textwrap;
 use time::{self, Timespec};
 
 pub const FALLBACK_ROW_LEN: usize = 79;
@@ -63,16 +64,22 @@ impl EntityLong {
         writeln!(sink, "{}", row)
     }
 
-    pub fn print_content<W: Write>(&self, sink: &mut W) -> io::Result<()> {
+    pub fn print_content<W: Write>(&self, sink: &mut W) {
+        let wrapped_data = textwrap::wrap(&self.alias_list, 29);
         writeln!(
             sink,
             " {:<4} {:<29} {:^8} {:^8} {:^28}",
             self.id,
-            self.alias_list,
+            wrapped_data[0],
             self.alias_count,
             self.snippet_count,
             time::at(self.created).rfc3339()
         )
+        .unwrap();
+
+        for i in 1..wrapped_data.len() {
+            writeln!(sink, " {:<4} {:<29}", "", wrapped_data[i]).unwrap();
+        }
     }
 }
 
@@ -87,52 +94,39 @@ impl EntityLongLong {
         writeln!(sink, "{}", row)
     }
 
-    pub fn print_content<W: Write>(&self, sink: &mut W) -> io::Result<()> {
-        if self.data.lines().count() > 1 {
-            let mut tmp = self.data.split('\n').nth(0).unwrap();
-            if tmp.len() > 24 {
-                tmp = &tmp[0..24];
+    pub fn print_content<W: Write>(&self, sink: &mut W) {
+        let wrapped_data = textwrap::wrap(&self.data, 40);
+        if wrapped_data.len() > 1 {
+            writeln!(
+                sink,
+                " {:<4} {:<4} {:<40} {:^28}",
+                self.id,
+                self.data_type,
+                wrapped_data[0],
+                time::at(self.last_modified).rfc3339()
+            )
+            .unwrap();
+
+            for i in 1..wrapped_data.len() {
                 writeln!(
                     sink,
-                    " {:<4} {:<4} {:<42} {:^28}",
-                    self.id,
-                    self.data_type,
-                    format!("{}... ({} more lines)", tmp, self.data.lines().count() - 1),
-                    time::at(self.last_modified).rfc3339()
+                    " {:<4} {:<4} {:<40} {:^28}",
+                    "", "", wrapped_data[i], ""
                 )
-            } else {
-                writeln!(
-                    sink,
-                    " {:<4} {:<4} {:<42} {:^28}",
-                    self.id,
-                    self.data_type,
-                    format!("{} ({} more lines)", tmp, self.data.lines().count() - 1),
-                    time::at(self.last_modified).rfc3339()
-                )
+                .unwrap();
             }
         } else {
-            if self.data.len() > 39 {
-                let mut tmp = self.data.clone();
-                tmp.truncate(39);
-                writeln!(
-                    sink,
-                    " {:<4} {:<4} {:<42} {:^28}",
-                    self.id,
-                    self.data_type,
-                    format!("{}...", tmp),
-                    time::at(self.last_modified).rfc3339()
-                )
-            } else {
-                writeln!(
-                    sink,
-                    " {:<4} {:<4} {:<42} {:^28}",
-                    self.id,
-                    self.data_type,
-                    self.data,
-                    time::at(self.last_modified).rfc3339()
-                )
-            }
+            writeln!(
+                sink,
+                " {:<4} {:<4} {:<40} {:^28}",
+                self.id,
+                self.data_type,
+                self.data,
+                time::at(self.last_modified).rfc3339()
+            )
+            .unwrap();
         }
+        writeln!(sink, "{}", "-".repeat(80)).unwrap();
     }
 }
 
@@ -161,47 +155,32 @@ impl Snippet {
         writeln!(sink, "{}", row)
     }
 
-    pub fn print_content<W: Write>(&self, sink: &mut W) -> io::Result<()> {
-        let mut tmp = self.data.split('\n').nth(0).unwrap();
-        if self.data.lines().count() > 1 {
-            if tmp.len() > 27 {
-                tmp = &tmp[0..27];
-                writeln!(
-                    sink,
-                    " {:<45} {:<6} {:^28}",
-                    format!("{}... ({} more lines)", tmp, self.data.lines().count() - 1),
-                    self.id,
-                    time::at(self.updated).rfc3339()
-                )
-            } else {
-                writeln!(
-                    sink,
-                    " {:<45} {:<6} {:^28}",
-                    format!("{} ({} more lines)", tmp, self.data.lines().count() - 1),
-                    self.id,
-                    time::at(self.updated).rfc3339()
-                )
+    pub fn print_content<W: Write>(&self, sink: &mut W) {
+        let wrapped_data = textwrap::wrap(&self.data, 45);
+
+        if wrapped_data.len() > 1 {
+            writeln!(
+                sink,
+                " {:<45} {:<6} {:^28}",
+                wrapped_data[0],
+                self.id,
+                time::at(self.updated).rfc3339()
+            )
+            .unwrap();
+
+            for i in 1..wrapped_data.len() {
+                writeln!(sink, " {:<45}", wrapped_data[i]).unwrap();
             }
         } else {
-            if self.data.len() > 42 {
-                let mut tmp = self.data.clone();
-                tmp.truncate(42);
-                writeln!(
-                    sink,
-                    " {:<45} {:<6} {:^28}",
-                    format!("{}...", tmp),
-                    self.id,
-                    time::at(self.updated).rfc3339()
-                )
-            } else {
-                writeln!(
-                    sink,
-                    " {:<45} {:<6} {:^28}",
-                    self.data,
-                    self.id,
-                    time::at(self.updated).rfc3339()
-                )
-            }
+            writeln!(
+                sink,
+                " {:<45} {:<6} {:^28}",
+                self.data,
+                self.id,
+                time::at(self.updated).rfc3339()
+            )
+            .unwrap();
         }
+        writeln!(sink, "{}", "-".repeat(80)).unwrap();
     }
 }
