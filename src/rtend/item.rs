@@ -58,6 +58,13 @@ pub struct RelationSnippet {
     pub updated: Timespec,
 }
 
+pub struct EntityFound {
+    pub id: u32,
+    pub name: String,
+    pub entity_id: u32,
+    pub updated: Timespec,
+}
+
 impl Entity {
     pub fn print_header<W: Write>(&self, sink: &mut W, row: &str) -> io::Result<()> {
         writeln!(sink, " {:<6} {:<28}", "ID", "Created on")?;
@@ -297,5 +304,28 @@ impl RelationSnippet {
             .unwrap();
         }
         writeln!(sink, "{}", "-".repeat(80)).unwrap();
+    }
+}
+
+impl EntityFound {
+    pub fn print_header<W: Write>(&self, sink: &mut W, row: &str) -> io::Result<()> {
+        writeln!(
+            sink,
+            " {:<20} {:<6} {:^10} {:^28}",
+            "Name", "ID", "Entity ID", "Updated"
+        )?;
+
+        writeln!(sink, "{}", row)
+    }
+
+    pub fn print_content<W: Write>(&self, sink: &mut W) -> io::Result<()> {
+        writeln!(
+            sink,
+            " {:<20} {:<6} {:^10} {:^28}",
+            self.name,
+            self.id,
+            self.entity_id,
+            time::at(self.updated).rfc3339()
+        )
     }
 }

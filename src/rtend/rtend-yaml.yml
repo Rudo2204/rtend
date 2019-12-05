@@ -164,3 +164,20 @@ subcommands:
                     - list_alias
                     - list_snippet
                     - list_relation
+    - find:
+        about: Finds a thing given its information
+        settings:
+            - ArgRequiredElseHelp
+            - DisableVersion
+        args:
+            - verbose:
+                help: "Increases verbosity level\nUse with --alias"
+                short: v
+                long: verbose
+                multiple: true
+            - find_alias:
+                help: Finds an entity by alias
+                short: a
+                long: alias
+                value_name: name
+                takes_value: true

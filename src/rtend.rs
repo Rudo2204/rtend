@@ -1,7 +1,7 @@
 use clap::{load_yaml, App};
 use std::unreachable;
 
-use rtend::{add, list, utils};
+use rtend::{add, find, list, utils};
 
 fn main() {
     let yml = load_yaml!("rtend/rtend-yaml.yml");
@@ -14,6 +14,10 @@ fn main() {
 
         ("list", Some(list_matches)) => {
             list::list(list_matches);
+        }
+
+        ("find", Some(find_matches)) => {
+            find::find(find_matches);
         }
 
         ("init", Some(_init_matches)) => {
