@@ -171,7 +171,7 @@ subcommands:
             - DisableVersion
         args:
             - verbose:
-                help: "Increases verbosity level\nUse with --alias"
+                help: "Increases verbosity level\nUse with --alias or --relation"
                 short: v
                 long: verbose
                 multiple: true
@@ -181,3 +181,13 @@ subcommands:
                 long: alias
                 value_name: name
                 takes_value: true
+                conflicts_with:
+                    - find_relation
+            - find_relation:
+                help: Finds an relation by entity id
+                short: r
+                long: relation
+                value_name: entity_id
+                takes_value: true
+                conflicts_with:
+                    - find_alias
