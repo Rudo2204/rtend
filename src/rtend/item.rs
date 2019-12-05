@@ -65,6 +65,14 @@ pub struct EntityFound {
     pub updated: Timespec,
 }
 
+pub struct EntityFoundLong {
+    pub id: u32,
+    pub name: String,
+    pub entity_id: u32,
+    pub other_alias: String,
+    pub updated: Timespec,
+}
+
 impl Entity {
     pub fn print_header<W: Write>(&self, sink: &mut W, row: &str) -> io::Result<()> {
         writeln!(sink, " {:<6} {:<28}", "ID", "Created on")?;
@@ -325,6 +333,30 @@ impl EntityFound {
             self.name,
             self.id,
             self.entity_id,
+            time::at(self.updated).rfc3339()
+        )
+    }
+}
+
+impl EntityFoundLong {
+    pub fn print_header<W: Write>(&self, sink: &mut W, row: &str) -> io::Result<()> {
+        writeln!(
+            sink,
+            " {:<10} {:<6} {:^10} {:^22} {:^28}",
+            "Name", "ID", "Entity ID", "Other Alias", "Updated"
+        )?;
+
+        writeln!(sink, "{}", row)
+    }
+
+    pub fn print_content<W: Write>(&self, sink: &mut W) -> io::Result<()> {
+        writeln!(
+            sink,
+            " {:<10} {:<6} {:^10} {:^22} {:^28}",
+            self.name,
+            self.id,
+            self.entity_id,
+            self.other_alias,
             time::at(self.updated).rfc3339()
         )
     }
