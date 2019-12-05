@@ -93,7 +93,7 @@ pub fn create_new_db(first_time: bool) -> rusqlite::Result<()> {
     conn.execute(
         "CREATE TABLE relation_snippet (
             id integer primary key,
-            relation_id integer not null references entity(id),
+            relation_id integer not null references relation(id),
             data text not null,
             created datetime not null default current_timestamp,
             updated datetime not null default current_timestamp

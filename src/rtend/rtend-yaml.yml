@@ -85,6 +85,7 @@ subcommands:
                     - add_relation_snippet
             - add_relation_snippet:
                 help: Adds a snippet to a relation
+                short: d
                 long: relation-snippet
                 value_name: relation_id
                 takes_value: true
@@ -100,15 +101,66 @@ subcommands:
             - DisableVersion
         args:
             - verbose:
-                help: Increases verbosity level
+                help: "Increases verbosity level\nUse with --entity or --relation"
                 short: v
                 long: verbose
                 multiple: true
-                requires:
-                    - list_entity
+                conflicts_with:
+                    - list_alias
+                    - list_snippet
+                    - list_relation_snippet
             - list_entity:
                 help: Lists information about an entity
                 short: e
                 long: entity
-                value_name: id
+                value_name: entity_id
                 takes_value: true
+                conflicts_with:
+                    - list_alias
+                    - list_snippet
+                    - list_relation
+                    - list_relation_snippet
+            - list_alias:
+                help: Lists aliases of an entity
+                short: a
+                long: alias
+                value_name: entity_id
+                takes_value: true
+                conflicts_with:
+                    - list_entity
+                    - list_snippet
+                    - list_relation
+                    - list_relation_snippet
+            - list_snippet:
+                help: Lists snippets of an entity
+                short: s
+                long: snippet
+                value_name: entity_id
+                takes_value: true
+                conflicts_with:
+                    - list_entity
+                    - list_alias
+                    - list_relation
+                    - list_relation_snippet
+            - list_relation:
+                help: Lists relations of an entity
+                short: r
+                long: relation
+                value_name: relation_id
+                takes_value: true
+                conflicts_with:
+                    - list_entity
+                    - list_alias
+                    - list_snippet
+                    - list_relation_snippet
+            - list_relation_snippet:
+                help: Lists relation snippets of an entity
+                short: d
+                long: relation-snippet
+                value_name: relation_id
+                takes_value: true
+                conflicts_with:
+                    - list_entity
+                    - list_alias
+                    - list_snippet
+                    - list_relation
