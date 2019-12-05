@@ -76,7 +76,7 @@ fn find_alias(name: &str, verbose: bool) -> rusqlite::Result<()> {
                 id: row.get(0)?,
                 name: row.get(1)?,
                 entity_id: row.get(2)?,
-                other_alias: row.get(3)?,
+                other_alias: row.get(3).unwrap_or("".to_string()),
                 updated: row.get(4)?,
             })
         })?;
@@ -107,7 +107,7 @@ fn find_relation(entity_id: u32, verbose: bool) -> rusqlite::Result<()> {
     if !verbose {
         let mut stmt = conn.prepare(
             "SELECT id, entity_id_a, entity_id_b,
-            updated from relation where id = (?)",
+            updated from relation where (entity_id_a = (?1) or entity_id_b = (?1))",
         )?;
 
         let relation_iter = stmt.query_map(params![entity_id], |row| {
