@@ -284,7 +284,7 @@ fn list_relation(relation_id: u32, verbose: bool) -> rusqlite::Result<()> {
             "SELECT id,
             entity_id_a, (SELECT group_concat(name, '; ') from alias where entity_id = entity_id_a limit 4) as alias_list_a,
             entity_id_b, (SELECT group_concat(name, '; ') from alias where entity_id = entity_id_b limit 4) as alias_list_b,
-            updated from relation where (entity_id_a = (?1) or entity_id_b = (?1))",
+            updated from relation where id = (?)",
         )?;
 
         let relation_iter = stmt.query_map(params![relation_id], |row| {
