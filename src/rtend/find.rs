@@ -29,6 +29,24 @@ pub fn find(args: &ArgMatches) {
                 process::exit(1);
             }
         }
+    } else if args.is_present("find_snippet") {
+        let snippet_string = args.value_of("find_snippet").unwrap();
+        match find_snippet(snippet_string) {
+            Ok(()) => (),
+            Err(e) => {
+                eprintln!("Could not find relation, error: {}", e);
+                process::exit(1);
+            }
+        }
+    } else if args.is_present("find_relation_snippet") {
+        let snippet_string = args.value_of("find_relation_snippet").unwrap();
+        match find_relation_snippet(snippet_string) {
+            Ok(()) => (),
+            Err(e) => {
+                eprintln!("Could not find relation, error: {}", e);
+                process::exit(1);
+            }
+        }
     }
 }
 
@@ -43,7 +61,7 @@ fn find_alias(name: &str, verbose: bool) -> rusqlite::Result<()> {
 
     if !verbose {
         let mut stmt = conn.prepare(
-            "SELECT id, name, entity_id, updated from alias where name like (?) order by name",
+            "SELECT id, name, entity_id, updated from alias where name like '%' || ? || '%' order by name",
         )?;
 
         let entity_iter = stmt.query_map(params![name], |row| {
@@ -68,7 +86,7 @@ fn find_alias(name: &str, verbose: bool) -> rusqlite::Result<()> {
         let mut stmt = conn.prepare(
             "SELECT a.id, a.name, a.entity_id, (SELECT group_concat(b.name, '; ') from alias b
             where a.entity_id = b.entity_id and a.id != b.id) as other_alias, a.updated from alias a
-            where a.name like (?) order by a.name",
+            where a.name like '%' || ? || '%' order by a.name",
         )?;
 
         let entity_iter = stmt.query_map(params![name], |row| {
@@ -158,5 +176,73 @@ fn find_relation(entity_id: u32, verbose: bool) -> rusqlite::Result<()> {
         }
     }
 
+    Ok(())
+}
+
+fn find_snippet(string: &str) -> rusqlite::Result<()> {
+    if !utils::check_database_exists() {
+        eprintln!("database does not exist, please run the subcommand init");
+        process::exit(1);
+    }
+    let conn = Connection::open(&utils::find_data_dir().unwrap().join("notes.db"))?;
+
+    let mut stmt = conn.prepare(
+        "SELECT id, data as snippet, entity_id, updated from snippet where data like '%' || ? || '%'",
+    )?;
+
+    let snippet_iter = stmt.query_map(params![string], |row| {
+        Ok(item::SnippetFound {
+            id: row.get(0)?,
+            data: row.get(1)?,
+            entity_id: row.get(2)?,
+            updated: row.get(3)?,
+        })
+    })?;
+
+    let mut stdout = io::BufWriter::new(io::stdout());
+    let row = "-".repeat(80);
+    let mut header_printed = false;
+    for snippet in snippet_iter {
+        let tmp = snippet.unwrap();
+        if !header_printed {
+            tmp.print_header(&mut stdout, &row).unwrap();
+            header_printed = true;
+        }
+        tmp.print_content(&mut stdout);
+    }
+    Ok(())
+}
+
+fn find_relation_snippet(string: &str) -> rusqlite::Result<()> {
+    if !utils::check_database_exists() {
+        eprintln!("database does not exist, please run the subcommand init");
+        process::exit(1);
+    }
+    let conn = Connection::open(&utils::find_data_dir().unwrap().join("notes.db"))?;
+
+    let mut stmt = conn.prepare(
+        "SELECT id, data as snippet, relation_id, updated from relation_snippet where data like '%' || ? || '%'",
+    )?;
+
+    let snippet_iter = stmt.query_map(params![string], |row| {
+        Ok(item::RelationSnippetFound {
+            id: row.get(0)?,
+            data: row.get(1)?,
+            relation_id: row.get(2)?,
+            updated: row.get(3)?,
+        })
+    })?;
+
+    let mut stdout = io::BufWriter::new(io::stdout());
+    let row = "-".repeat(80);
+    let mut header_printed = false;
+    for snippet in snippet_iter {
+        let tmp = snippet.unwrap();
+        if !header_printed {
+            tmp.print_header(&mut stdout, &row).unwrap();
+            header_printed = true;
+        }
+        tmp.print_content(&mut stdout);
+    }
     Ok(())
 }

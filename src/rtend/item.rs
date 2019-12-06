@@ -2,8 +2,6 @@ use std::io::{self, Write};
 use textwrap;
 use time::{self, Timespec};
 
-pub const FALLBACK_ROW_LEN: usize = 79;
-
 pub struct Entity {
     pub id: u32,
     pub created: Timespec,
@@ -70,6 +68,20 @@ pub struct EntityFoundLong {
     pub name: String,
     pub entity_id: u32,
     pub other_alias: String,
+    pub updated: Timespec,
+}
+
+pub struct SnippetFound {
+    pub id: u32,
+    pub data: String,
+    pub entity_id: u32,
+    pub updated: Timespec,
+}
+
+pub struct RelationSnippetFound {
+    pub id: u32,
+    pub data: String,
+    pub relation_id: u32,
     pub updated: Timespec,
 }
 
@@ -359,5 +371,91 @@ impl EntityFoundLong {
             self.other_alias,
             time::at(self.updated).rfc3339()
         )
+    }
+}
+
+impl SnippetFound {
+    pub fn print_header<W: Write>(&self, sink: &mut W, row: &str) -> io::Result<()> {
+        writeln!(
+            sink,
+            " {:<36} {:<3} {:^10} {:^28}",
+            "Snippets", "ID", "Entity ID", "Last modified"
+        )?;
+
+        writeln!(sink, "{}", row)
+    }
+
+    pub fn print_content<W: Write>(&self, sink: &mut W) {
+        let wrapped_data = textwrap::wrap(&self.data, 37);
+
+        if wrapped_data.len() > 1 {
+            writeln!(
+                sink,
+                " {:<36} {:<4} {:^10} {:^28}",
+                wrapped_data[0],
+                self.id,
+                self.entity_id,
+                time::at(self.updated).rfc3339()
+            )
+            .unwrap();
+
+            for i in 1..wrapped_data.len() {
+                writeln!(sink, " {:<36}", wrapped_data[i]).unwrap();
+            }
+        } else {
+            writeln!(
+                sink,
+                " {:<36} {:<4} {:^10} {:^28}",
+                self.data,
+                self.id,
+                self.entity_id,
+                time::at(self.updated).rfc3339()
+            )
+            .unwrap();
+        }
+        writeln!(sink, "{}", "-".repeat(80)).unwrap();
+    }
+}
+
+impl RelationSnippetFound {
+    pub fn print_header<W: Write>(&self, sink: &mut W, row: &str) -> io::Result<()> {
+        writeln!(
+            sink,
+            " {:<34} {:<3} {:^12} {:^28}",
+            "Snippets", "ID", "Relation ID", "Last modified"
+        )?;
+
+        writeln!(sink, "{}", row)
+    }
+
+    pub fn print_content<W: Write>(&self, sink: &mut W) {
+        let wrapped_data = textwrap::wrap(&self.data, 35);
+
+        if wrapped_data.len() > 1 {
+            writeln!(
+                sink,
+                " {:<34} {:<4} {:^12} {:^28}",
+                wrapped_data[0],
+                self.id,
+                self.relation_id,
+                time::at(self.updated).rfc3339()
+            )
+            .unwrap();
+
+            for i in 1..wrapped_data.len() {
+                writeln!(sink, " {:<34}", wrapped_data[i]).unwrap();
+            }
+        } else {
+            writeln!(
+                sink,
+                " {:<34} {:<4} {:^12} {:^28}",
+                self.data,
+                self.id,
+                self.relation_id,
+                time::at(self.updated).rfc3339()
+            )
+            .unwrap();
+        }
+        writeln!(sink, "{}", "-".repeat(80)).unwrap();
     }
 }

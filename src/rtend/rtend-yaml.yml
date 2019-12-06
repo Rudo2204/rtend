@@ -175,6 +175,9 @@ subcommands:
                 short: v
                 long: verbose
                 multiple: true
+                conflicts_with:
+                    - find_snippet
+                    - find_relation_snippet
             - find_alias:
                 help: Finds an entity by alias
                 short: a
@@ -183,6 +186,8 @@ subcommands:
                 takes_value: true
                 conflicts_with:
                     - find_relation
+                    - find_snippet
+                    - find_relation_snippet
             - find_relation:
                 help: Finds an relation by entity id
                 short: r
@@ -191,3 +196,25 @@ subcommands:
                 takes_value: true
                 conflicts_with:
                     - find_alias
+                    - find_snippet
+                    - find_relation_snippet
+            - find_snippet:
+                help: Finds an entity by its snippet
+                short: s
+                long: snippet
+                value_name: string
+                takes_value: true
+                conflicts_with:
+                    - find_alias
+                    - find_relation
+                    - find_relation_snippet
+            - find_relation_snippet:
+                help: Finds an entity by its relation snippet
+                short: d
+                long: relation-snippet
+                value_name: string
+                takes_value: true
+                conflicts_with:
+                    - find_alias
+                    - find_relation
+                    - find_snippet
