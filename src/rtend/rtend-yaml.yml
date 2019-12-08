@@ -218,3 +218,64 @@ subcommands:
                     - find_alias
                     - find_relation
                     - find_snippet
+    - delete:
+        about: Deletes things in the database
+        settings:
+            - ArgRequiredElseHelp
+            - DisableVersion
+        args:
+            - delete_entity:
+                help: Deletes an entity
+                short: e
+                long: entity
+                value_name: entity_id
+                takes_value: true
+                conflicts_with:
+                    - delete_alias
+                    - delete_snippet
+                    - delete_relation
+                    - delete_relation_snippet
+            - delete_alias:
+                help: Deletes an alias
+                short: a
+                long: alias
+                value_name: alias_id
+                takes_value: true
+                conflicts_with:
+                    - delete_entity
+                    - delete_snippet
+                    - delete_relation
+                    - delete_relation_snippet
+            - delete_snippet:
+                help: Deletes a snippet
+                short: s
+                long: snippet
+                value_name: snippet_id
+                takes_value: true
+                conflicts_with:
+                    - delete_alias
+                    - delete_entity
+                    - delete_relation
+                    - delete_relation_snippet
+            - delete_relation:
+                help: Deletes a relation
+                short: r
+                long: relation
+                value_name: relation_id
+                takes_value: true
+                conflicts_with:
+                    - delete_alias
+                    - delete_entity
+                    - delete_snippet
+                    - delete_relation_snippet
+            - delete_relation_snippet:
+                help: Deletes a relation snippet
+                short: d
+                long: relation-snippet
+                value_name: relation_snippet_id
+                takes_value: true
+                conflicts_with:
+                    - delete_alias
+                    - delete_entity
+                    - delete_snippet
+                    - delete_relation
