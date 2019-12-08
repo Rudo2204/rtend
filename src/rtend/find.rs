@@ -3,12 +3,11 @@ use rusqlite::{self, params, Connection};
 use std::{io, process, str::FromStr};
 
 use crate::item;
-use crate::utils;
 
-pub fn find(args: &ArgMatches) {
+pub fn find(args: &ArgMatches, conn: Connection) {
     if args.is_present("find_alias") {
         let name = args.value_of("find_alias").unwrap();
-        match find_alias(name, args.is_present("verbose")) {
+        match find_alias(conn, name, args.is_present("verbose")) {
             Ok(()) => (),
             Err(e) => {
                 eprintln!("Could not find entity, error: {}", e);
@@ -22,7 +21,7 @@ pub fn find(args: &ArgMatches) {
                 process::exit(1);
             });
 
-        match find_relation(entity_id, args.is_present("verbose")) {
+        match find_relation(conn, entity_id, args.is_present("verbose")) {
             Ok(()) => (),
             Err(e) => {
                 eprintln!("Could not find relation, error: {}", e);
@@ -31,7 +30,7 @@ pub fn find(args: &ArgMatches) {
         }
     } else if args.is_present("find_snippet") {
         let snippet_string = args.value_of("find_snippet").unwrap();
-        match find_snippet(snippet_string) {
+        match find_snippet(conn, snippet_string) {
             Ok(()) => (),
             Err(e) => {
                 eprintln!("Could not find relation, error: {}", e);
@@ -40,7 +39,7 @@ pub fn find(args: &ArgMatches) {
         }
     } else if args.is_present("find_relation_snippet") {
         let snippet_string = args.value_of("find_relation_snippet").unwrap();
-        match find_relation_snippet(snippet_string) {
+        match find_relation_snippet(conn, snippet_string) {
             Ok(()) => (),
             Err(e) => {
                 eprintln!("Could not find relation, error: {}", e);
@@ -50,12 +49,7 @@ pub fn find(args: &ArgMatches) {
     }
 }
 
-fn find_alias(name: &str, verbose: bool) -> rusqlite::Result<()> {
-    if !utils::check_database_exists() {
-        eprintln!("database does not exist, please run the subcommand init");
-        process::exit(1);
-    }
-    let conn = Connection::open(&utils::find_data_dir().unwrap().join("notes.db"))?;
+fn find_alias(conn: Connection, name: &str, verbose: bool) -> rusqlite::Result<()> {
     let mut stdout = io::BufWriter::new(io::stdout());
     let mut header_printed = false;
 
@@ -113,12 +107,7 @@ fn find_alias(name: &str, verbose: bool) -> rusqlite::Result<()> {
     Ok(())
 }
 
-fn find_relation(entity_id: u32, verbose: bool) -> rusqlite::Result<()> {
-    if !utils::check_database_exists() {
-        eprintln!("database does not exist, please run the subcommand init");
-        process::exit(1);
-    }
-    let conn = Connection::open(&utils::find_data_dir().unwrap().join("notes.db"))?;
+fn find_relation(conn: Connection, entity_id: u32, verbose: bool) -> rusqlite::Result<()> {
     let mut stdout = io::BufWriter::new(io::stdout());
     let mut header_printed = false;
 
@@ -179,13 +168,7 @@ fn find_relation(entity_id: u32, verbose: bool) -> rusqlite::Result<()> {
     Ok(())
 }
 
-fn find_snippet(string: &str) -> rusqlite::Result<()> {
-    if !utils::check_database_exists() {
-        eprintln!("database does not exist, please run the subcommand init");
-        process::exit(1);
-    }
-    let conn = Connection::open(&utils::find_data_dir().unwrap().join("notes.db"))?;
-
+fn find_snippet(conn: Connection, string: &str) -> rusqlite::Result<()> {
     let mut stmt = conn.prepare(
         "SELECT id, data as snippet, entity_id, updated from snippet where data like '%' || ? || '%'",
     )?;
@@ -213,13 +196,7 @@ fn find_snippet(string: &str) -> rusqlite::Result<()> {
     Ok(())
 }
 
-fn find_relation_snippet(string: &str) -> rusqlite::Result<()> {
-    if !utils::check_database_exists() {
-        eprintln!("database does not exist, please run the subcommand init");
-        process::exit(1);
-    }
-    let conn = Connection::open(&utils::find_data_dir().unwrap().join("notes.db"))?;
-
+fn find_relation_snippet(conn: Connection, string: &str) -> rusqlite::Result<()> {
     let mut stmt = conn.prepare(
         "SELECT id, data as snippet, relation_id, updated from relation_snippet where data like '%' || ? || '%'",
     )?;

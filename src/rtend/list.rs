@@ -3,9 +3,8 @@ use rusqlite::{self, params, Connection};
 use std::{io, process, str::FromStr};
 
 use crate::item;
-use crate::utils;
 
-pub fn list(args: &ArgMatches) {
+pub fn list(args: &ArgMatches, conn: Connection) {
     if args.is_present("list_entity") {
         let entity_id =
             u32::from_str(args.value_of("list_entity").unwrap()).unwrap_or_else(|_err| {
@@ -14,7 +13,7 @@ pub fn list(args: &ArgMatches) {
             });
         let verbosity_level = args.occurrences_of("verbose");
 
-        match list_entity(entity_id, verbosity_level) {
+        match list_entity(conn, entity_id, verbosity_level) {
             Ok(()) => (),
             Err(e) => {
                 eprintln!("Could not list entity, error: {}", e);
@@ -28,7 +27,7 @@ pub fn list(args: &ArgMatches) {
                 process::exit(1);
             });
 
-        match list_alias(entity_id) {
+        match list_alias(conn, entity_id) {
             Ok(()) => (),
             Err(e) => {
                 eprintln!("Could not list alias, error: {}", e);
@@ -42,7 +41,7 @@ pub fn list(args: &ArgMatches) {
                 process::exit(1);
             });
 
-        match list_snippet(entity_id) {
+        match list_snippet(conn, entity_id) {
             Ok(()) => (),
             Err(e) => {
                 eprintln!("Could not list alias, error: {}", e);
@@ -56,7 +55,7 @@ pub fn list(args: &ArgMatches) {
                 process::exit(1);
             });
 
-        match list_relation(relation_id, args.is_present("verbose")) {
+        match list_relation(conn, relation_id, args.is_present("verbose")) {
             Ok(()) => (),
             Err(e) => {
                 eprintln!("Could not list relation, error: {}", e);
@@ -70,7 +69,7 @@ pub fn list(args: &ArgMatches) {
                 process::exit(1);
             });
 
-        match list_relation_snippet(relation_id) {
+        match list_relation_snippet(conn, relation_id) {
             Ok(()) => (),
             Err(e) => {
                 eprintln!("Could not list relation snippet, error: {}", e);
@@ -80,13 +79,7 @@ pub fn list(args: &ArgMatches) {
     }
 }
 
-fn list_entity(entity_id: u32, verbosity_level: u64) -> rusqlite::Result<()> {
-    if !utils::check_database_exists() {
-        eprintln!("database does not exist, please run the subcommand init");
-        process::exit(1);
-    }
-    let conn = Connection::open(&utils::find_data_dir().unwrap().join("notes.db"))?;
-
+fn list_entity(conn: Connection, entity_id: u32, verbosity_level: u64) -> rusqlite::Result<()> {
     // No verbosity level, basically just lists the created date
     if verbosity_level == 0 {
         let mut stmt = conn.prepare("SELECT * from entity where id = (?1)")?;
@@ -182,13 +175,7 @@ fn list_entity(entity_id: u32, verbosity_level: u64) -> rusqlite::Result<()> {
     Ok(())
 }
 
-fn list_alias(entity_id: u32) -> rusqlite::Result<()> {
-    if !utils::check_database_exists() {
-        eprintln!("database does not exist, please run the subcommand init");
-        process::exit(1);
-    }
-    let conn = Connection::open(&utils::find_data_dir().unwrap().join("notes.db"))?;
-
+fn list_alias(conn: Connection, entity_id: u32) -> rusqlite::Result<()> {
     let mut stmt = conn.prepare("SELECT id, name, updated from alias where entity_id = (?)")?;
 
     let alias_iter = stmt.query_map(params![entity_id], |row| {
@@ -214,13 +201,7 @@ fn list_alias(entity_id: u32) -> rusqlite::Result<()> {
     Ok(())
 }
 
-fn list_snippet(entity_id: u32) -> rusqlite::Result<()> {
-    if !utils::check_database_exists() {
-        eprintln!("database does not exist, please run the subcommand init");
-        process::exit(1);
-    }
-    let conn = Connection::open(&utils::find_data_dir().unwrap().join("notes.db"))?;
-
+fn list_snippet(conn: Connection, entity_id: u32) -> rusqlite::Result<()> {
     let mut stmt =
         conn.prepare("SELECT id, data as snippet, updated from snippet where entity_id = (?)")?;
 
@@ -247,12 +228,7 @@ fn list_snippet(entity_id: u32) -> rusqlite::Result<()> {
     Ok(())
 }
 
-fn list_relation(relation_id: u32, verbose: bool) -> rusqlite::Result<()> {
-    if !utils::check_database_exists() {
-        eprintln!("database does not exist, please run the subcommand init");
-        process::exit(1);
-    }
-    let conn = Connection::open(&utils::find_data_dir().unwrap().join("notes.db"))?;
+fn list_relation(conn: Connection, relation_id: u32, verbose: bool) -> rusqlite::Result<()> {
     let mut stdout = io::BufWriter::new(io::stdout());
     let mut header_printed = false;
 
@@ -311,13 +287,7 @@ fn list_relation(relation_id: u32, verbose: bool) -> rusqlite::Result<()> {
     Ok(())
 }
 
-fn list_relation_snippet(relation_id: u32) -> rusqlite::Result<()> {
-    if !utils::check_database_exists() {
-        eprintln!("database does not exist, please run the subcommand init");
-        process::exit(1);
-    }
-    let conn = Connection::open(&utils::find_data_dir().unwrap().join("notes.db"))?;
-
+fn list_relation_snippet(conn: Connection, relation_id: u32) -> rusqlite::Result<()> {
     let mut stmt = conn.prepare(
         "SELECT id, data as snippet, updated from relation_snippet where relation_id = (?)",
     )?;

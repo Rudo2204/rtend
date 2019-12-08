@@ -2,8 +2,7 @@ use clap::ArgMatches;
 use rusqlite::{self, params, Connection};
 use std::{process, str::FromStr, unreachable};
 
-use crate::utils;
-pub fn delete(args: &ArgMatches) {
+pub fn delete(args: &ArgMatches, conn: Connection) {
     if args.is_present("delete_entity") {
         let entity_id =
             u32::from_str(args.value_of("delete_entity").unwrap()).unwrap_or_else(|_err| {
@@ -11,7 +10,7 @@ pub fn delete(args: &ArgMatches) {
                 process::exit(1);
             });
 
-        match delete_entity(entity_id) {
+        match delete_entity(conn, entity_id) {
             Ok(()) => (),
             Err(e) => {
                 eprintln!("Could not delete entity, error: {}", e);
@@ -25,7 +24,7 @@ pub fn delete(args: &ArgMatches) {
                 process::exit(1);
             });
 
-        match delete_alias(alias_id) {
+        match delete_alias(conn, alias_id) {
             Ok(()) => (),
             Err(e) => {
                 eprintln!("Could not delete alias, error: {}", e);
@@ -39,7 +38,7 @@ pub fn delete(args: &ArgMatches) {
                 process::exit(1);
             });
 
-        match delete_snippet(snippet_id) {
+        match delete_snippet(conn, snippet_id) {
             Ok(()) => (),
             Err(e) => {
                 eprintln!("Could not delete snippet, error: {}", e);
@@ -53,7 +52,7 @@ pub fn delete(args: &ArgMatches) {
                 process::exit(1);
             });
 
-        match delete_relation(relation_id) {
+        match delete_relation(conn, relation_id) {
             Ok(()) => (),
             Err(e) => {
                 eprintln!("Could not delete relation, error: {}", e);
@@ -67,7 +66,7 @@ pub fn delete(args: &ArgMatches) {
                 process::exit(1);
             });
 
-        match delete_relation_snippet(relation_snippet_id) {
+        match delete_relation_snippet(conn, relation_snippet_id) {
             Ok(()) => (),
             Err(e) => {
                 eprintln!("Could not delete relation snippet, error: {}", e);
@@ -77,13 +76,7 @@ pub fn delete(args: &ArgMatches) {
     }
 }
 
-fn delete_entity(entity_id: u32) -> rusqlite::Result<()> {
-    if !utils::check_database_exists() {
-        eprintln!("database does not exist, please run the subcommand init");
-        process::exit(1);
-    }
-
-    let conn = Connection::open(&utils::find_data_dir().unwrap().join("notes.db"))?;
+fn delete_entity(conn: Connection, entity_id: u32) -> rusqlite::Result<()> {
     let rows_returned = conn.execute("DELETE from entity where id = (?)", params![entity_id])?;
 
     match rows_returned {
@@ -100,13 +93,7 @@ fn delete_entity(entity_id: u32) -> rusqlite::Result<()> {
     Ok(())
 }
 
-fn delete_alias(alias_id: u32) -> rusqlite::Result<()> {
-    if !utils::check_database_exists() {
-        eprintln!("database does not exist, please run the subcommand init");
-        process::exit(1);
-    }
-
-    let conn = Connection::open(&utils::find_data_dir().unwrap().join("notes.db"))?;
+fn delete_alias(conn: Connection, alias_id: u32) -> rusqlite::Result<()> {
     let rows_returned = conn.execute("DELETE from alias where id = (?)", params![alias_id])?;
 
     match rows_returned {
@@ -120,13 +107,7 @@ fn delete_alias(alias_id: u32) -> rusqlite::Result<()> {
     Ok(())
 }
 
-fn delete_snippet(snippet_id: u32) -> rusqlite::Result<()> {
-    if !utils::check_database_exists() {
-        eprintln!("database does not exist, please run the subcommand init");
-        process::exit(1);
-    }
-
-    let conn = Connection::open(&utils::find_data_dir().unwrap().join("notes.db"))?;
+fn delete_snippet(conn: Connection, snippet_id: u32) -> rusqlite::Result<()> {
     let rows_returned = conn.execute("DELETE from snippet where id = (?)", params![snippet_id])?;
 
     match rows_returned {
@@ -143,13 +124,7 @@ fn delete_snippet(snippet_id: u32) -> rusqlite::Result<()> {
     Ok(())
 }
 
-fn delete_relation(relation_id: u32) -> rusqlite::Result<()> {
-    if !utils::check_database_exists() {
-        eprintln!("database does not exist, please run the subcommand init");
-        process::exit(1);
-    }
-
-    let conn = Connection::open(&utils::find_data_dir().unwrap().join("notes.db"))?;
+fn delete_relation(conn: Connection, relation_id: u32) -> rusqlite::Result<()> {
     let rows_returned =
         conn.execute("DELETE from relation where id = (?)", params![relation_id])?;
 
@@ -167,13 +142,7 @@ fn delete_relation(relation_id: u32) -> rusqlite::Result<()> {
     Ok(())
 }
 
-fn delete_relation_snippet(relation_snippet_id: u32) -> rusqlite::Result<()> {
-    if !utils::check_database_exists() {
-        eprintln!("database does not exist, please run the subcommand init");
-        process::exit(1);
-    }
-
-    let conn = Connection::open(&utils::find_data_dir().unwrap().join("notes.db"))?;
+fn delete_relation_snippet(conn: Connection, relation_snippet_id: u32) -> rusqlite::Result<()> {
     let rows_returned = conn.execute(
         "DELETE from relation_snippet where id = (?)",
         params![relation_snippet_id],
