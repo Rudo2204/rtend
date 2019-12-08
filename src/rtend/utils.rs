@@ -35,7 +35,7 @@ pub fn create_new_db(first_time: bool) -> rusqlite::Result<()> {
     let rtend_data_dir = find_data_dir().unwrap();
 
     println!(
-        "rtend data does not exist, will now create one at: {}",
+        "rtend's data does not exist, will now create one at: {}",
         rtend_data_dir.display()
     );
 
@@ -46,6 +46,7 @@ pub fn create_new_db(first_time: bool) -> rusqlite::Result<()> {
         }
     }
 
+    // Future: Change the database `notes.db` accordingly to a config file
     let conn = Connection::open(&rtend_data_dir.join("notes.db"))?;
 
     // Importing schema
