@@ -2,7 +2,7 @@ use atty::{is, Stream};
 use clap::ArgMatches;
 use rusqlite::{self, params, Connection, NO_PARAMS};
 use std::io::{self, Read};
-use std::{process, str::FromStr};
+use std::{process, str::FromStr, unreachable};
 
 use crate::utils;
 
@@ -10,7 +10,7 @@ pub fn add(args: &ArgMatches, conn: Connection) {
     if args.is_present("add_entity") {
         let name = args.value_of("add_entity").unwrap();
         match add_new_entity(conn, name) {
-            Ok(()) => println!("entity name `{}` added", name),
+            Ok(()) => (),
             Err(e) => {
                 eprintln!("Could not add entity, error: {}", e);
                 process::exit(1);
@@ -47,10 +47,7 @@ pub fn add(args: &ArgMatches, conn: Connection) {
         });
 
         match add_relation_two_entities(conn, entity_id_a, entity_id_b) {
-            Ok(()) => println!(
-                "relation between entity_id `{}` and entity_id `{}` added",
-                entity_id_a, entity_id_b
-            ),
+            Ok(()) => (),
             Err(e) => {
                 eprintln!("Could not add relation between two entities, error: {}", e);
                 process::exit(1);
@@ -101,23 +98,60 @@ fn add_alias_to_entity(conn: Connection, entity_id: u32, name: &str) -> rusqlite
     Ok(())
 }
 
+fn get_latest_entity_id(conn: Connection) -> rusqlite::Result<u32> {
+    // Can also do "SELECT id from entity order by id limit 1" as an alternative, the below is
+    // probably faster though, idk, probably 0 performance gain
+    conn.query_row_and_then("SELECT seq from sqlite_sequence", NO_PARAMS, |id| id.get(0))
+}
+
 fn add_new_entity(conn: Connection, name: &str) -> rusqlite::Result<()> {
     conn.execute("INSERT INTO entity default values", NO_PARAMS)?;
-    conn.execute(
+    let rows_returned = conn.execute(
         "INSERT INTO alias (name, entity_id) VALUES
-                 (?1, (SELECT seq from sqlite_sequence where name='entity'))",
+                 (?1, (SELECT seq from sqlite_sequence))",
         params![name],
     )?;
+
+    match rows_returned {
+        1 => {
+            println!(
+                "entity name `{}` added, their entity_id is `{}`",
+                name,
+                get_latest_entity_id(conn)?
+            );
+        }
+        _ => unreachable!(),
+    }
 
     Ok(())
 }
 
+fn get_latest_relation_id(conn: Connection) -> rusqlite::Result<u32> {
+    conn.query_row_and_then(
+        "SELECT id from relation order by id desc limit 1",
+        NO_PARAMS,
+        |id| id.get(0),
+    )
+}
+
 fn add_relation_two_entities(conn: Connection, id_a: u32, id_b: u32) -> rusqlite::Result<()> {
-    conn.execute(
+    let rows_returned = conn.execute(
         "INSERT INTO relation (entity_id_a, entity_id_b) VALUES
                  (?1, ?2)",
         params![id_a, id_b],
     )?;
+
+    match rows_returned {
+        1 => {
+            println!(
+                "relation between entity_id `{}` and entity_id `{}` added. relation_id is `{}`",
+                id_a,
+                id_b,
+                get_latest_relation_id(conn)?
+            );
+        }
+        _ => unreachable!(),
+    }
 
     Ok(())
 }
