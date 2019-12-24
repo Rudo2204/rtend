@@ -1,7 +1,37 @@
 use directories::BaseDirs;
 use rusqlite;
 use rusqlite::{Connection, NO_PARAMS};
-use std::{fs, path, process};
+use std::{
+    fs,
+    io::{self, Write},
+    path, process,
+};
+
+pub fn get_yn_input() -> Result<bool, ()> {
+    let answer;
+    let yes = vec!["y", "Y", "yes", "YES", "Yes"];
+    let no = vec!["n", "N", "no", "NO", "No"];
+    print!("Proceed? [y/n]: ");
+    io::stdout().flush().unwrap();
+    loop {
+        let mut input = String::new();
+        match io::stdin().read_line(&mut input) {
+            Ok(_) => (),
+            Err(e) => eprintln!("Could not read stdin, error: {}", e),
+        }
+        input = input.trim().to_string();
+        if yes.iter().any(|n| &n[..] == input) {
+            answer = true;
+            break;
+        } else if no.iter().any(|n| &n[..] == input) {
+            answer = false;
+            break;
+        }
+        eprintln!("Invalid input, exiting");
+        process::exit(1);
+    }
+    Ok(answer)
+}
 
 pub fn check_database_exists() -> bool {
     find_data_dir().unwrap().join("notes.db").exists()
