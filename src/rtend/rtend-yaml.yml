@@ -224,6 +224,10 @@ subcommands:
             - ArgRequiredElseHelp
             - DisableVersion
         args:
+            - force:
+                help: "Force delete everything related to the command\nUse with --entity or --relation"
+                short: f
+                long: force
             - delete_entity:
                 help: Deletes an entity
                 short: e

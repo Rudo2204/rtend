@@ -2,6 +2,8 @@ use clap::ArgMatches;
 use rusqlite::{self, params, Connection};
 use std::{process, str::FromStr, unreachable};
 
+use crate::utils;
+
 pub fn delete(args: &ArgMatches, conn: Connection) {
     if args.is_present("delete_entity") {
         let entity_id =
@@ -10,11 +12,29 @@ pub fn delete(args: &ArgMatches, conn: Connection) {
                 process::exit(1);
             });
 
-        match delete_entity(conn, entity_id) {
-            Ok(()) => (),
-            Err(e) => {
-                eprintln!("Could not delete entity, error: {}", e);
+        if args.is_present("force") {
+            println!(
+                "This operation will force delete everything related to this entity and cannot be undone"
+            );
+            if utils::get_yn_input().unwrap() {
+                match force_delete_entity(conn, entity_id) {
+                    Ok(()) => (),
+                    Err(e) => {
+                        eprintln!("Could not delete entity, error: {}", e);
+                        process::exit(1);
+                    }
+                }
+            } else {
+                println!("Aborted");
                 process::exit(1);
+            }
+        } else {
+            match delete_entity(conn, entity_id) {
+                Ok(()) => (),
+                Err(e) => {
+                    eprintln!("Could not delete entity, error: {}", e);
+                    process::exit(1);
+                }
             }
         }
     } else if args.is_present("delete_alias") {
@@ -52,11 +72,29 @@ pub fn delete(args: &ArgMatches, conn: Connection) {
                 process::exit(1);
             });
 
-        match delete_relation(conn, relation_id) {
-            Ok(()) => (),
-            Err(e) => {
-                eprintln!("Could not delete relation, error: {}", e);
+        if args.is_present("force") {
+            println!(
+            "This operation will force delete every relation snippets related to this relation_id and cannot be undone"
+            );
+            if utils::get_yn_input().unwrap() {
+                match force_delete_relation(conn, relation_id) {
+                    Ok(()) => (),
+                    Err(e) => {
+                        eprintln!("Could not delete relation, error: {}", e);
+                        process::exit(1);
+                    }
+                }
+            } else {
+                println!("Aborted");
                 process::exit(1);
+            }
+        } else {
+            match delete_relation(conn, relation_id) {
+                Ok(()) => (),
+                Err(e) => {
+                    eprintln!("Could not delete relation, error: {}", e);
+                    process::exit(1);
+                }
             }
         }
     } else if args.is_present("delete_relation_snippet") {
@@ -158,6 +196,70 @@ fn delete_relation_snippet(conn: Connection, relation_snippet_id: u32) -> rusqli
         }
         _ => unreachable!(),
     }
+
+    Ok(())
+}
+
+fn force_delete_entity(conn: Connection, entity_id: u32) -> rusqlite::Result<()> {
+    // Relation snippets
+    let mut rows_returned = conn.execute(
+        "DELETE from relation_snippet where relation_id in (SELECT id from relation where entity_id_a = (?1) or entity_id_b = (?1))",
+        params![entity_id],
+    )?;
+    println!(
+        "{} relation snippets of entity_id {} deleted",
+        rows_returned, entity_id
+    );
+
+    // Relations
+    rows_returned = conn.execute(
+        "DELETE from relation where id in (SELECT id from relation where entity_id_a = (?1) or entity_id_b = (?1))",
+        params![entity_id],
+    )?;
+    println!(
+        "{} relations of entity_id {} deleted",
+        rows_returned, entity_id
+    );
+
+    // Snippets
+    rows_returned = conn.execute(
+        "DELETE from snippet where id in (SELECT id from snippet where entity_id = (?))",
+        params![entity_id],
+    )?;
+    println!(
+        "{} snippets of entity_id {} deleted",
+        rows_returned, entity_id
+    );
+
+    // Aliases
+    rows_returned = conn.execute(
+        "DELETE from alias where id in (SELECT id from alias where entity_id = (?))",
+        params![entity_id],
+    )?;
+    println!(
+        "{} aliases of entity_id {} deleted",
+        rows_returned, entity_id
+    );
+
+    // Finally delete the entity itself
+    delete_entity(conn, entity_id)?;
+
+    Ok(())
+}
+
+fn force_delete_relation(conn: Connection, relation_id: u32) -> rusqlite::Result<()> {
+    // Relation snippets
+    let rows_returned = conn.execute(
+        "DELETE from relation_snippet where relation_id = (?)",
+        params![relation_id],
+    )?;
+    println!(
+        "{} relation snippets of relation_id {} deleted",
+        rows_returned, relation_id
+    );
+
+    // Then the relation itself
+    delete_relation(conn, relation_id)?;
 
     Ok(())
 }
