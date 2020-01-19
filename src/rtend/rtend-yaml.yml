@@ -105,10 +105,6 @@ subcommands:
                 short: v
                 long: verbose
                 multiple: true
-                conflicts_with:
-                    - list_alias
-                    - list_snippet
-                    - list_relation_snippet
             - list_entity:
                 help: Lists information about an entity
                 short: e
@@ -175,9 +171,6 @@ subcommands:
                 short: v
                 long: verbose
                 multiple: true
-                conflicts_with:
-                    - find_snippet
-                    - find_relation_snippet
             - find_alias:
                 help: Finds an entity by alias
                 short: a
@@ -283,3 +276,36 @@ subcommands:
                     - delete_entity
                     - delete_snippet
                     - delete_relation
+    - edit:
+        about: Edit things in the database
+        settings:
+            - ArgRequiredElseHelp
+            - DisableVersion
+        args:
+            - edit_alias:
+                help: Edits an alias
+                short: a
+                long: alias
+                value_name: alias_id
+                takes_value: true
+                conflicts_with:
+                    - edit_snippet
+                    - edit_relation_snippet
+            - edit_snippet:
+                help: Edits a snippet
+                short: s
+                long: snippet
+                value_name: snippet_id
+                takes_value: true
+                conflicts_with:
+                    - edit_alias
+                    - edit_relation_snippet
+            - edit_relation_snippet:
+                help: Edits a relation snippet
+                short: d
+                long: relation-snippet
+                value_name: relation_snippet_id
+                takes_value: true
+                conflicts_with:
+                    - edit_alias
+                    - edit_snippet

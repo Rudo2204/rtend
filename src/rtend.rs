@@ -2,7 +2,7 @@ use clap::{load_yaml, App};
 use rusqlite::Connection;
 use std::{process, unreachable};
 
-use rtend::{add, delete, find, list, utils};
+use rtend::{add, delete, edit, find, list, utils};
 
 fn main() {
     let yml = load_yaml!("rtend/rtend-yaml.yml");
@@ -35,6 +35,10 @@ fn main() {
 
         ("delete", Some(delete_matches)) => {
             delete::delete(delete_matches, conn);
+        }
+
+        ("edit", Some(edit_matches)) => {
+            edit::edit(edit_matches, conn);
         }
 
         ("find", Some(find_matches)) => {
