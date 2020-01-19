@@ -76,9 +76,51 @@ pub fn list(args: &ArgMatches, conn: Connection) {
                 process::exit(1);
             }
         }
+    } else if args.is_present("verbose") {
+        match list_verbose(conn) {
+            Ok(()) => (),
+            Err(e) => {
+                eprintln!("Could not list verbosely, error: {}", e);
+                process::exit(1);
+            }
+        }
     }
 }
 
+fn list_verbose(conn: Connection) -> rusqlite::Result<()> {
+    let mut stmt = conn.prepare("
+        SELECT id,
+        (SELECT substr(group_concat(name, '; '), 0, 40) from alias where entity_id = entity.id limit 4) as alias_list,
+        (SELECT count(*) from alias where entity_id = entity.id) as alias_count,
+        (SELECT count(*) from snippet where entity_id = entity.id) as snippet_count,
+        created
+        from entity order by 1
+        ")?;
+
+    let entity_iter = stmt.query_map(params![], |row| {
+        Ok(item::EntityLong {
+            id: row.get(0)?,
+            alias_list: row.get(1)?,
+            alias_count: row.get(2)?,
+            snippet_count: row.get(3)?,
+            created: row.get(4)?,
+        })
+    })?;
+
+    let mut stdout = io::BufWriter::new(io::stdout());
+    let row = "-".repeat(80);
+    let mut header_printed = false;
+    for entity in entity_iter {
+        let tmp = entity.unwrap();
+        if !header_printed {
+            tmp.print_header(&mut stdout, &row).unwrap();
+            header_printed = true;
+        }
+        tmp.print_content(&mut stdout);
+    }
+
+    Ok(())
+}
 fn list_entity(conn: Connection, entity_id: u32, verbosity_level: u64) -> rusqlite::Result<()> {
     // No verbosity level, basically just lists the created date
     if verbosity_level == 0 {
