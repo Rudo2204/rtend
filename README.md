@@ -30,7 +30,10 @@ SUBCOMMANDS:
     skim      Skims over the database
 ```
 # Installation
-Head to `releases` tab and download the pre-compiled binary or clone the repo and compile it yourself.
+Head to `releases` tab and download the pre-compiled binary of your machine's architecture or clone the repo and compile it yourself with `cargo`.
 
 # Windows
 Windows targets lack the `skim` feature due to the crate [skim](https://github.com/lotabout/skim) does not support Windows.
+
+# GNU GPL v3
+[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
