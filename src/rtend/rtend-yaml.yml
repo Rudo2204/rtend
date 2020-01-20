@@ -9,6 +9,15 @@ settings:
     - SubcommandRequiredElseHelp
     - GlobalVersion
 
+args:
+    - profile:
+        help: Temporary operates on a different database
+        short: p
+        long: profile
+        global: true
+        value_name: name
+        takes_value: true
+
 subcommands:
     - init:
         about: Initializes the database

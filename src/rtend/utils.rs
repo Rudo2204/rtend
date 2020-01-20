@@ -33,8 +33,8 @@ pub fn get_yn_input() -> Result<bool, ()> {
     Ok(answer)
 }
 
-pub fn check_database_exists() -> bool {
-    find_data_dir().unwrap().join("notes.db").exists()
+pub fn check_database_exists(name: &str) -> bool {
+    find_data_dir().unwrap().join(name).exists()
 }
 
 pub fn trim_trailing_newline(s: &mut String) -> String {
@@ -61,7 +61,7 @@ pub fn find_data_dir() -> Result<path::PathBuf, &'static str> {
     }
 }
 
-pub fn create_new_db(first_time: bool) -> rusqlite::Result<()> {
+pub fn create_new_db(first_time: bool, name: &str) -> rusqlite::Result<()> {
     let rtend_data_dir = find_data_dir().unwrap();
 
     println!(
@@ -76,8 +76,7 @@ pub fn create_new_db(first_time: bool) -> rusqlite::Result<()> {
         }
     }
 
-    // Future: Change the database `notes.db` accordingly to a config file
-    let conn = Connection::open(&rtend_data_dir.join("notes.db"))?;
+    let conn = Connection::open(&rtend_data_dir.join(name))?;
 
     // Importing schema
     conn.execute(

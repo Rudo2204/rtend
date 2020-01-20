@@ -8,24 +8,29 @@ fn main() {
     let yml = load_yaml!("rtend/rtend-yaml.yml");
     let matches = App::from_yaml(yml).get_matches();
 
-    // First check subcommand init and initialize the database
+    // By default the program operates on the database `notes.db`
+    // It would switch to whatever database if user uses the --profile flag
+    let mut db = "notes.db".to_string();
+    if matches.is_present("profile") {
+        db = format!("{}.db", matches.value_of("profile").unwrap());
+    }
+
+    // First check if the database exists yet, if not then would prompt the user to init it first
     if let Some(_init_matches) = matches.subcommand_matches("init") {
         if utils::check_first_time() {
-            utils::create_new_db(true).unwrap();
-        } else if !utils::check_database_exists() {
-            utils::create_new_db(false).unwrap();
+            utils::create_new_db(true, &db).unwrap();
+        } else if !utils::check_database_exists(&db) {
+            utils::create_new_db(false, &db).unwrap();
         }
-    } else if !utils::check_database_exists() {
+    } else if !utils::check_database_exists(&db) {
         eprintln!("database does not exist, please run the subcommand `init`");
         process::exit(1);
     }
 
-    // Future: Change the database `notes.db` accordingly to a config file
-    let conn =
-        Connection::open(&utils::find_data_dir().unwrap().join("notes.db")).unwrap_or_else(|err| {
-            eprintln!("Could not open database! Error: {}", err);
-            process::exit(1)
-        });
+    let conn = Connection::open(&utils::find_data_dir().unwrap().join(&db)).unwrap_or_else(|err| {
+        eprintln!("Could not open database! Error: {}", err);
+        process::exit(1)
+    });
 
     // Then check every other subcommands
     match matches.subcommand() {
@@ -45,7 +50,8 @@ fn main() {
             find::find(find_matches, conn);
         }
 
-        // It was already hanlded in the above code
+        // It was already hanlded in the above code, it still needs to be here though
+        // else the program would panic because of unreachable code
         ("init", Some(_init_matches)) => {}
 
         ("list", Some(list_matches)) => {
