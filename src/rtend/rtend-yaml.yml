@@ -1,6 +1,6 @@
 name: rtend
 version: "0.1.0"
-about: Simple cli note taking program
+about: Simple CLI note taking program
 author: rudo2204 <rudo2204@gmail.com>
 
 # Global AppSettings
@@ -272,7 +272,7 @@ subcommands:
                     - delete_snippet
                     - delete_relation
     - edit:
-        about: Edit things in the database
+        about: Edits things in the database
         settings:
             - ArgRequiredElseHelp
             - DisableVersion
