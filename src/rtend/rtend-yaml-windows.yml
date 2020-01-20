@@ -1,0 +1,306 @@
+name: rtend
+version: "0.1.0"
+about: Simple cli note taking program
+author: rudo2204 <rudo2204@gmail.com>
+
+# Global AppSettings
+settings:
+    - DisableHelpSubcommand
+    - SubcommandRequiredElseHelp
+    - GlobalVersion
+
+args:
+    - profile:
+        help: Temporarily operates on a different database
+        short: p
+        long: profile
+        global: true
+        value_name: name
+        takes_value: true
+
+subcommands:
+    - init:
+        about: Initializes the database
+        settings:
+            - DisableVersion
+    - add:
+        about: Adds new things
+        settings:
+            - ArgRequiredElseHelp
+            - DisableVersion
+        args:
+            - add_entity:
+                help: Adds a new entity
+                short: e
+                long: entity
+                value_name: name
+                takes_value: true
+                conflicts_with:
+                    - add_alias
+                    - add_relation
+                    - add_snippet
+            - add_alias:
+                help: Adds an alias to an entity
+                short: a
+                long: alias
+                value_names:
+                    - entity_id
+                    - name
+                takes_value: true
+                min_values: 2
+                conflicts_with:
+                    - add_entity
+                    - add_relation
+                    - add_snippet
+                    - add_relation_snippet
+            - add_relation:
+                help: Adds a relation between two entities
+                short: r
+                long: relation
+                value_names:
+                    - entity_id_a
+                    - entity_id_b
+                takes_value: true
+                min_values: 2
+                conflicts_with:
+                    - add_entity
+                    - add_alias
+                    - add_snippet
+                    - add_relation_snippet
+            - add_snippet:
+                help: Adds a snippet to an entity
+                short: s
+                long: snippet
+                value_name: entity_id
+                takes_value: true
+                conflicts_with:
+                    - add_entity
+                    - add_alias
+                    - add_relation
+                    - add_relation_snippet
+            - add_relation_snippet:
+                help: Adds a snippet to a relation
+                short: d
+                long: relation-snippet
+                value_name: relation_id
+                takes_value: true
+                conflicts_with:
+                    - add_entity
+                    - add_alias
+                    - add_relation
+                    - add_snippet
+    - list:
+        about: Lists information about things
+        settings:
+            - ArgRequiredElseHelp
+            - DisableVersion
+        args:
+            - verbose:
+                help: "Increases verbosity level\nUse with --entity or --relation"
+                short: v
+                long: verbose
+                multiple: true
+            - list_entity:
+                help: Lists information about an entity
+                short: e
+                long: entity
+                value_name: entity_id
+                takes_value: true
+                conflicts_with:
+                    - list_alias
+                    - list_snippet
+                    - list_relation
+                    - list_relation_snippet
+            - list_alias:
+                help: Lists aliases of an entity
+                short: a
+                long: alias
+                value_name: entity_id
+                takes_value: true
+                conflicts_with:
+                    - list_entity
+                    - list_snippet
+                    - list_relation
+                    - list_relation_snippet
+            - list_snippet:
+                help: Lists snippets of an entity
+                short: s
+                long: snippet
+                value_name: entity_id
+                takes_value: true
+                conflicts_with:
+                    - list_entity
+                    - list_alias
+                    - list_relation
+                    - list_relation_snippet
+            - list_relation:
+                help: Lists relations of an entity
+                short: r
+                long: relation
+                value_name: relation_id
+                takes_value: true
+                conflicts_with:
+                    - list_entity
+                    - list_alias
+                    - list_snippet
+                    - list_relation_snippet
+            - list_relation_snippet:
+                help: Lists relation snippets of an entity
+                short: d
+                long: relation-snippet
+                value_name: relation_id
+                takes_value: true
+                conflicts_with:
+                    - list_entity
+                    - list_alias
+                    - list_snippet
+                    - list_relation
+    - find:
+        about: Finds a thing given its information
+        settings:
+            - ArgRequiredElseHelp
+            - DisableVersion
+        args:
+            - verbose:
+                help: "Increases verbosity level\nUse with --alias or --relation"
+                short: v
+                long: verbose
+                multiple: true
+            - find_alias:
+                help: Finds an entity by alias
+                short: a
+                long: alias
+                value_name: name
+                takes_value: true
+                conflicts_with:
+                    - find_relation
+                    - find_snippet
+                    - find_relation_snippet
+            - find_relation:
+                help: Finds an relation by entity id
+                short: r
+                long: relation
+                value_name: entity_id
+                takes_value: true
+                conflicts_with:
+                    - find_alias
+                    - find_snippet
+                    - find_relation_snippet
+            - find_snippet:
+                help: Finds an entity by its snippet
+                short: s
+                long: snippet
+                value_name: string
+                takes_value: true
+                conflicts_with:
+                    - find_alias
+                    - find_relation
+                    - find_relation_snippet
+            - find_relation_snippet:
+                help: Finds an entity by its relation snippet
+                short: d
+                long: relation-snippet
+                value_name: string
+                takes_value: true
+                conflicts_with:
+                    - find_alias
+                    - find_relation
+                    - find_snippet
+    - delete:
+        about: Deletes things in the database
+        settings:
+            - ArgRequiredElseHelp
+            - DisableVersion
+        args:
+            - force:
+                help: "Force delete everything related to the command\nUse with --entity or --relation"
+                short: f
+                long: force
+            - delete_entity:
+                help: Deletes an entity
+                short: e
+                long: entity
+                value_name: entity_id
+                takes_value: true
+                conflicts_with:
+                    - delete_alias
+                    - delete_snippet
+                    - delete_relation
+                    - delete_relation_snippet
+            - delete_alias:
+                help: Deletes an alias
+                short: a
+                long: alias
+                value_name: alias_id
+                takes_value: true
+                conflicts_with:
+                    - delete_entity
+                    - delete_snippet
+                    - delete_relation
+                    - delete_relation_snippet
+            - delete_snippet:
+                help: Deletes a snippet
+                short: s
+                long: snippet
+                value_name: snippet_id
+                takes_value: true
+                conflicts_with:
+                    - delete_alias
+                    - delete_entity
+                    - delete_relation
+                    - delete_relation_snippet
+            - delete_relation:
+                help: Deletes a relation
+                short: r
+                long: relation
+                value_name: relation_id
+                takes_value: true
+                conflicts_with:
+                    - delete_alias
+                    - delete_entity
+                    - delete_snippet
+                    - delete_relation_snippet
+            - delete_relation_snippet:
+                help: Deletes a relation snippet
+                short: d
+                long: relation-snippet
+                value_name: relation_snippet_id
+                takes_value: true
+                conflicts_with:
+                    - delete_alias
+                    - delete_entity
+                    - delete_snippet
+                    - delete_relation
+    - edit:
+        about: Edit things in the database
+        settings:
+            - ArgRequiredElseHelp
+            - DisableVersion
+        args:
+            - edit_alias:
+                help: Edits an alias
+                short: a
+                long: alias
+                value_name: alias_id
+                takes_value: true
+                conflicts_with:
+                    - edit_snippet
+                    - edit_relation_snippet
+            - edit_snippet:
+                help: Edits a snippet
+                short: s
+                long: snippet
+                value_name: snippet_id
+                takes_value: true
+                conflicts_with:
+                    - edit_alias
+                    - edit_relation_snippet
+            - edit_relation_snippet:
+                help: Edits a relation snippet
+                short: d
+                long: relation-snippet
+                value_name: relation_snippet_id
+                takes_value: true
+                conflicts_with:
+                    - edit_alias
+                    - edit_snippet

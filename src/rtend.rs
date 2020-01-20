@@ -2,10 +2,18 @@ use clap::{load_yaml, App};
 use rusqlite::Connection;
 use std::{process, unreachable};
 
+#[cfg(target_family = "unix")]
 use rtend::{add, delete, edit, find, list, skim, utils};
 
+#[cfg(target_family = "windows")]
+use rtend::{add, delete, edit, find, list, utils};
+
 fn main() {
+    #[cfg(target_family = "unix")]
     let yml = load_yaml!("rtend/rtend-yaml.yml");
+    #[cfg(target_family = "windows")]
+    let yml = load_yaml!("rtend/rtend-yaml-windows.yml");
+
     let matches = App::from_yaml(yml).get_matches();
 
     // By default the program operates on the database `notes.db`
@@ -33,37 +41,70 @@ fn main() {
     });
 
     // Then check every other subcommands
-    match matches.subcommand() {
-        ("add", Some(add_matches)) => {
-            add::add(add_matches, conn);
+    if cfg!(target_family = "unix") {
+        match matches.subcommand() {
+            ("add", Some(add_matches)) => {
+                add::add(add_matches, conn);
+            }
+
+            ("delete", Some(delete_matches)) => {
+                delete::delete(delete_matches, conn);
+            }
+
+            ("edit", Some(edit_matches)) => {
+                edit::edit(edit_matches, conn);
+            }
+
+            ("find", Some(find_matches)) => {
+                find::find(find_matches, conn);
+            }
+
+            // It was already hanlded in the above code, it still needs to be here though
+            // else the program would panic because of unreachable code
+            ("init", Some(_init_matches)) => {}
+
+            ("list", Some(list_matches)) => {
+                list::list(list_matches, conn);
+            }
+
+            ("skim", Some(_skim_matches)) => {
+                skim::skim(conn);
+            }
+
+            // The program actually never reaches here because of yaml settings
+            ("", None) => println!("Run the program with --help to get started"),
+            _ => unreachable!(),
         }
+    // Windows targets don't get skim feature
+    } else {
+        match matches.subcommand() {
+            ("add", Some(add_matches)) => {
+                add::add(add_matches, conn);
+            }
 
-        ("delete", Some(delete_matches)) => {
-            delete::delete(delete_matches, conn);
+            ("delete", Some(delete_matches)) => {
+                delete::delete(delete_matches, conn);
+            }
+
+            ("edit", Some(edit_matches)) => {
+                edit::edit(edit_matches, conn);
+            }
+
+            ("find", Some(find_matches)) => {
+                find::find(find_matches, conn);
+            }
+
+            // It was already hanlded in the above code, it still needs to be here though
+            // else the program would panic because of unreachable code
+            ("init", Some(_init_matches)) => {}
+
+            ("list", Some(list_matches)) => {
+                list::list(list_matches, conn);
+            }
+
+            // The program actually never reaches here because of yaml settings
+            ("", None) => println!("Run the program with --help to get started"),
+            _ => unreachable!(),
         }
-
-        ("edit", Some(edit_matches)) => {
-            edit::edit(edit_matches, conn);
-        }
-
-        ("find", Some(find_matches)) => {
-            find::find(find_matches, conn);
-        }
-
-        // It was already hanlded in the above code, it still needs to be here though
-        // else the program would panic because of unreachable code
-        ("init", Some(_init_matches)) => {}
-
-        ("list", Some(list_matches)) => {
-            list::list(list_matches, conn);
-        }
-
-        ("skim", Some(_skim_matches)) => {
-            skim::skim(conn);
-        }
-
-        // The program actually never reaches here because of yaml settings
-        ("", None) => println!("Run the program with --help to get started"),
-        _ => unreachable!(),
     }
 }
