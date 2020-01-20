@@ -121,7 +121,6 @@ fn list_verbose(conn: Connection) -> rusqlite::Result<()> {
 
     Ok(())
 }
-
 fn list_entity(conn: Connection, entity_id: u32, verbosity_level: u64) -> rusqlite::Result<()> {
     // No verbosity level, basically just lists the created date
     if verbosity_level == 0 {
