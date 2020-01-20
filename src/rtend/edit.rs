@@ -2,7 +2,6 @@ use clap::ArgMatches;
 use rusqlite::{self, params, Connection};
 use scrawl;
 use std::{process, str::FromStr};
-use time;
 
 pub fn edit(args: &ArgMatches, conn: Connection) {
     if args.is_present("edit_alias") {
@@ -53,15 +52,14 @@ fn update_alias(conn: Connection, id: u32) -> rusqlite::Result<()> {
     )?;
     let edited_data = scrawl::with(&old_data).expect("Could not open editor");
     if edited_data.is_empty() {
-        eprintln!("Edited data is empty. Aborted. Use `delete` function instead!");
+        eprintln!("Edited data is empty. Aborted");
         process::exit(1);
     }
     println!("edited = {}", edited_data);
 
-    let current_time = time::get_time();
     let rows_returned = conn.execute(
-        "UPDATE alias set name = (?1), updated = (?2) where id = (?3)",
-        params![edited_data, current_time, id],
+        "UPDATE alias set name = (?1), updated = datetime('now') where id = (?2)",
+        params![edited_data, id],
     )?;
 
     match rows_returned {
@@ -82,14 +80,13 @@ fn update_snippet(conn: Connection, id: u32) -> rusqlite::Result<()> {
     )?;
     let edited_data = scrawl::with(&old_data).expect("Could not open editor");
     if edited_data.is_empty() {
-        eprintln!("Edited data is empty. Aborted. Use `delete` function instead!");
+        eprintln!("Edited data is empty. Aborted");
         process::exit(1);
     }
 
-    let current_time = time::get_time();
     let rows_returned = conn.execute(
-        "UPDATE snippet set data = (?1), updated = (?2) where id = (?3)",
-        params![edited_data, current_time, id],
+        "UPDATE snippet set data = (?1), updated = datetime('now') where id = (?2)",
+        params![edited_data, id],
     )?;
 
     match rows_returned {
@@ -110,14 +107,13 @@ fn update_relation_snippet(conn: Connection, id: u32) -> rusqlite::Result<()> {
     )?;
     let edited_data = scrawl::with(&old_data).expect("Could not open editor");
     if edited_data.is_empty() {
-        eprintln!("Edited data is empty. Aborted. Use `delete` function instead!");
+        eprintln!("Edited data is empty. Aborted");
         process::exit(1);
     }
 
-    let current_time = time::get_time();
     let rows_returned = conn.execute(
-        "UPDATE relation_snippet set data = (?1), updated = (?2) where id = (?3)",
-        params![edited_data, current_time, id],
+        "UPDATE relation_snippet set data = (?1), updated = datetime('now') where id = (?2)",
+        params![edited_data, id],
     )?;
 
     match rows_returned {
