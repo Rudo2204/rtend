@@ -25,7 +25,7 @@ environment:
     - TARGET: x86_64-pc-windows-gnu
       RUST_VERSION: nightly
     - TARGET: x86_64-pc-windows-msvc
-     RUST_VERSION: nightly
+      RUST_VERSION: nightly
 
 install:
   - ps: >-
