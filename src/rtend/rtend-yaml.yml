@@ -309,3 +309,7 @@ subcommands:
                 conflicts_with:
                     - edit_alias
                     - edit_snippet
+    - skim:
+        about: Skims over the database
+        settings:
+            - DisableVersion

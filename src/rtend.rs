@@ -2,7 +2,7 @@ use clap::{load_yaml, App};
 use rusqlite::Connection;
 use std::{process, unreachable};
 
-use rtend::{add, delete, edit, find, list, utils};
+use rtend::{add, delete, edit, find, list, skim, utils};
 
 fn main() {
     let yml = load_yaml!("rtend/rtend-yaml.yml");
@@ -47,6 +47,10 @@ fn main() {
 
         ("list", Some(list_matches)) => {
             list::list(list_matches, conn);
+        }
+
+        ("skim", Some(_skim_matches)) => {
+            skim::skim(conn);
         }
 
         // The program actually never reaches here because of yaml settings
