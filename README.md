@@ -1,5 +1,4 @@
 # rtend
-===
 Linux: [![Build Status](https://travis-ci.com/Rudo2204/rtend.svg?branch=master)](https://travis-ci.org/Rudo2204/rtend)<br/>
 Windows: [![Build status](https://ci.appveyor.com/api/projects/status/3ltt06neh2uns9y0?svg=true)](https://ci.appveyor.com/project/Rudo2204/rtend)
 
@@ -31,7 +30,7 @@ SUBCOMMANDS:
     skim      Skims over the database
 ```
 # Installation
-Head to `release` tab and download the pre-compiled binary or clone the repo and compile it yourself.
+Head to `releases` tab and download the pre-compiled binary or clone the repo and compile it yourself.
 
 # Windows
 Windows targets lack the `skim` feature due to the crate [skim](https://github.com/lotabout/skim) does not support Windows.
