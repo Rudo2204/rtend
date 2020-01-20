@@ -11,12 +11,32 @@ sudo: required
 
 env:
   global:
+    # TODO Update this to match the name of your project.
     - CRATE_NAME=rtend
 
 matrix:
   # TODO These are all the build jobs. Adjust as necessary. Comment out what you
   # don't need
   include:
+    # Android
+    # - env: TARGET=aarch64-linux-android DISABLE_TESTS=1
+    # - env: TARGET=arm-linux-androideabi DISABLE_TESTS=1
+    # - env: TARGET=armv7-linux-androideabi DISABLE_TESTS=1
+    # - env: TARGET=i686-linux-android DISABLE_TESTS=1
+    # - env: TARGET=x86_64-linux-android DISABLE_TESTS=1
+
+    # iOS
+    # - env: TARGET=aarch64-apple-ios DISABLE_TESTS=1
+    #   os: osx
+    # - env: TARGET=armv7-apple-ios DISABLE_TESTS=1
+    #   os: osx
+    # - env: TARGET=armv7s-apple-ios DISABLE_TESTS=1
+    #   os: osx
+    # - env: TARGET=i386-apple-ios DISABLE_TESTS=1
+    #   os: osx
+    # - env: TARGET=x86_64-apple-ios DISABLE_TESTS=1
+    #   os: osx
+
     # Linux
     - env: TARGET=aarch64-unknown-linux-gnu
     - env: TARGET=arm-unknown-linux-gnueabi
@@ -35,18 +55,26 @@ matrix:
     - env: TARGET=x86_64-unknown-linux-musl
 
     # OSX
-    - env: TARGET=i686-apple-darwin
-      os: osx
+    # - env: TARGET=i686-apple-darwin
+    #   os: osx
     - env: TARGET=x86_64-apple-darwin
       os: osx
 
     # *BSD
-    - env: TARGET=i686-unknown-freebsd DISABLE_TESTS=1
-    - env: TARGET=x86_64-unknown-freebsd DISABLE_TESTS=1
+    # - env: TARGET=i686-unknown-freebsd DISABLE_TESTS=1
+    # - env: TARGET=x86_64-unknown-freebsd DISABLE_TESTS=1
     - env: TARGET=x86_64-unknown-netbsd DISABLE_TESTS=1
 
     # Windows
-    - env: TARGET=x86_64-pc-windows-gnu
+    # - env: TARGET=x86_64-pc-windows-gnu
+
+    # Bare metal
+    # These targets don't support std and as such are likely not suitable for
+    # most crates.
+    # - env: TARGET=thumbv6m-none-eabi
+    # - env: TARGET=thumbv7em-none-eabi
+    # - env: TARGET=thumbv7em-none-eabihf
+    # - env: TARGET=thumbv7m-none-eabi
 
     # Testing other channels
     - env: TARGET=x86_64-unknown-linux-gnu
@@ -77,7 +105,7 @@ deploy:
   # - Encrypt it: `travis encrypt 0123456789012345678901234567890123456789
   # - Paste the output down here
   api_key:
-    secture: bMNDK519e8dMX+YmluiaY2YkKSycYuM4fOw5aHKElURsMEfblCzikr4Ne5Z/39rW5hXkR27glfxPzxqwNO+Do3IYxrWvBVfhsuPCl6PaU1eJxMsxN4wX58CqBnwRL4DRVAfup32PvYZW6g1/pq6eJcy5JH6qE0FqsOaZjpKs7Q5kGVqWe4Ws570CcWtV0xsbgk9jLgvut6yQIck+Wqj6Gf6lnt/zhATK2oOyMpBDPUnaWBj33m/iRUoJv0j13yQMTPMFFI/n0NTw2Z/jyKK2sCs2zjIOQjo1EqAVaYDv6JUCxb/YBiU+JaSUHSgLjFSvhR3cxMg1bh/NpHT8MCFg9jeCxoGfMVZxU3VaLzBHrx+WzGNFyVMoSs355Jcq1YXc+2pb+Qzfek70HbmPdGScOtvw5P8YLgoviEtAm7kHIoY+Jwq6GQwEP+dak05j5BzL2vOB5eVrPDyQvdE9dohCrIgxewrnBw34s5Xn3BXLgVf79M64x5ypVs3/Xk5/7H53lgY/k2F4jQacBTCfTcvKXznf6VmdLwkIx6WdzEKuE7C9oPUBtnik/jwCEJ4isboZVGx8mSABSKgYyEjAB6w3FCfSoeBk6FtvexxXYI9TZGNIZtL0aNgiMEAfQWOL3lznIYbyUTczHVuRmGDn7WzTypMGZpTK+4sfOYdiNSf+Z0E=
+    secure: "UYhxSJZXwJ8gZsJ0erofmFeqJK3+fyZ1WIyKl0OavLLwrWjBKrZNtO1M1WQCbGIz5d5ESwuPm+aKxyo2jrzS0dfwALD9nkepRZo716P8jLcYQZE+hnbqrm0FX/MmVcttUxN4aHQrUhSSMqf1z5jto3H9IXyTUQU+eUftrJ+HhnciQRaxvEsG7OTIrIFSXzQKaocT3uplIeBKWOOlrVwNlkgfN6XTrO437KWilTOtMTGiWQlCPHUo5IMhUz/eLEF5YW1qDRG7kB1NCQTWwfCGq0bjCbyRGc+r53fMuvxGq0T4XG0aIA8OEZObVARTD+irWGHB02fUVvsGFO4ikGX/HaaRcCERlhnZBHS5bJtetWXLIlImiWwRaDZe6vTb5Z9CzUxNE0oa86MkUuPDJWAQc8D8K4MMW+hexVRvLJGVNTkLQgPFN1YLuAPVtSWhd828VQqgDPcsnwTOpBPgNfEfiwn9F3VWcgZVESzzadocTIU5GZTaOmbUB06a6266Kx5ws9uJnWsO95coGn7U0KXCS4WpwbmU1Wi8Xk1VJZhYE7OAEQzjNPUaKi5A5n41FypTp1ch+r1j6kqBQLVY7wK9fsSUByg9SyjpuOZdtjLfevB8vMwt469cGejKksqMhZyCgaqp2OiES4VBB1pgKkaLQtz/PNUCjj5vMxxiazLyo+I="
   file_glob: true
   file: $CRATE_NAME-$TRAVIS_TAG-$TARGET.*
   on:

@@ -17,8 +17,10 @@ main() {
 
     test -f Cargo.lock || cargo generate-lockfile
 
+    # TODO Update this to build the artifacts that matter to you
     cross rustc --bin rtend --target $TARGET --release -- -C lto
 
+    # TODO Update this to package the right artifacts
     cp target/$TARGET/release/rtend $stage/
 
     cd $stage
