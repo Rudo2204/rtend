@@ -4,6 +4,7 @@ use regex::Regex;
 use rusqlite::{self, params, Connection};
 use skim::{Skim, SkimOptionsBuilder};
 use std::io::{self, Cursor, Read, Seek, SeekFrom};
+use std::process;
 use std::str::FromStr;
 use tempfile;
 
@@ -66,10 +67,24 @@ pub fn skim(conn: Connection) {
     // TODO: This is the duplicated code way to do this, can probably clone and then call
     // list_verbose from list module but it will run into lifetime issue and connection sharing
     // See: https://github.com/jgallagher/rusqlite/issues/393
-    let item = selected_items.iter().nth(0).unwrap();
-    let full_output = item.get_output_text();
-    let cap = re.captures(&full_output).unwrap().get(1).unwrap().as_str();
-    let entity_id = u32::from_str(cap).unwrap();
+    let item = selected_items.iter().nth(0);
+    match item {
+        None => {
+            eprintln!("No entry selected. Aborted");
+            process::exit(1);
+        }
+        // We don't need to handle it here, because the memory would get freed after this
+        Some(_) => {}
+    };
+
+    let full_output = item.unwrap().get_output_text();
+    let cap = re
+        .captures(&full_output)
+        .expect("Could not capture entity_id in output")
+        .get(1)
+        .expect("Could not get entity_id from capture group 1")
+        .as_str();
+    let entity_id = u32::from_str(cap).expect("Could not get entity_id");
     let mut stmt = conn.prepare(
         "
         SELECT id, 'e' as type, cast(id as text) as data, created as last_modified from entity where id = (?1)
