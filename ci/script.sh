@@ -12,7 +12,8 @@ main() {
 
     cross test --target $TARGET --release
 
-    cross run --target $TARGET --release
+    # Have to add --help here because it would exit with code 1 otherwise
+    cross run --target $TARGET --release -- --help
 }
 
 # we don't run the "test phase" when doing deploys
