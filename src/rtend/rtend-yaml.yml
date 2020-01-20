@@ -13,21 +13,7 @@ subcommands:
     - init:
         about: Initializes the database
         settings:
-            - ArgRequiredElseHelp
             - DisableVersion
-        args:
-            - from_scratch:
-                help: Initializes from scratch
-                short: n
-                long: from-scratch
-                conflicts_with:
-                    - from_backup
-            - from_backup:
-                help: Initializes from backup
-                short: b
-                long: from-backup
-                value_name: path
-                takes_value: true
     - add:
         about: Adds new things
         settings:

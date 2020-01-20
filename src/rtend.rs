@@ -45,6 +45,9 @@ fn main() {
             find::find(find_matches, conn);
         }
 
+        // It was already hanlded in the above code
+        ("init", Some(_init_matches)) => {}
+
         ("list", Some(list_matches)) => {
             list::list(list_matches, conn);
         }
