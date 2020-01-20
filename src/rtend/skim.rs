@@ -1,3 +1,5 @@
+use crate::item;
+#[cfg(target_family = "unix")]
 use regex::Regex;
 use rusqlite::{self, params, Connection};
 use skim::{Skim, SkimOptionsBuilder};
@@ -5,8 +7,7 @@ use std::io::{self, Cursor, Read, Seek, SeekFrom};
 use std::str::FromStr;
 use tempfile;
 
-use crate::item;
-
+#[cfg(target_family = "unix")]
 pub fn skim(conn: Connection) {
     let options = SkimOptionsBuilder::default()
         .preview_window(Some("down:50%"))
