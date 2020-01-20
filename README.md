@@ -1,5 +1,5 @@
 # rtend
-Linux: [![Build Status](https://travis-ci.com/Rudo2204/rtend.svg?branch=master)](https://travis-ci.org/Rudo2204/rtend)<br/>
+Unix: [![Build Status](https://travis-ci.com/Rudo2204/rtend.svg?branch=master)](https://travis-ci.org/Rudo2204/rtend)<br/>
 Windows: [![Build status](https://ci.appveyor.com/api/projects/status/3ltt06neh2uns9y0?svg=true)](https://ci.appveyor.com/project/Rudo2204/rtend)
 
 My rust implementation of the isaac's tend: https://github.com/isaacmorneau/tend/<br/>
