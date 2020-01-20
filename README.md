@@ -8,7 +8,7 @@ Basically a simple Rust wrapper for sqlite, it makes a nice CLI note taking prog
 
 ## Overview
 ```
-rtend 0.1.0
+rtend 0.1.1
 Simple CLI note taking program
 
 USAGE:
