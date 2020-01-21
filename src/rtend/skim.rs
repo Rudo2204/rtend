@@ -70,7 +70,6 @@ pub fn skim(conn: Connection) {
     let item = selected_items.iter().nth(0);
     match item {
         None => {
-            eprintln!("No entry selected. Aborted");
             process::exit(1);
         }
         // We don't need to handle it here, because the memory would get freed after this
