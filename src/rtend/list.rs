@@ -84,6 +84,14 @@ pub fn list(args: &ArgMatches, conn: Connection) {
                 process::exit(1);
             }
         }
+    } else if args.is_present("list_stat") {
+        match list_stat(conn) {
+            Ok(()) => (),
+            Err(e) => {
+                eprintln!("Could not list stat, error: {}", e);
+                process::exit(1);
+            }
+        }
     }
 }
 
@@ -352,6 +360,41 @@ fn list_relation_snippet(conn: Connection, relation_id: u32) -> rusqlite::Result
             header_printed = true;
         }
         tmp.print_content(&mut stdout);
+    }
+
+    Ok(())
+}
+
+fn list_stat(conn: Connection) -> rusqlite::Result<()> {
+    let mut stmt = conn.prepare(
+        "SELECT 'Entities', count(*) from entity
+        UNION ALL
+        SELECT 'Aliases', count(*) from alias
+        UNION ALL
+        SELECT 'Snippets', count(*) from snippet
+        UNION ALL
+        SELECT 'Relations', count(*) from relation
+        UNION ALL
+        SELECT 'Relation Snippets', count(*) from relation_snippet",
+    )?;
+
+    let stat_iter = stmt.query_map(params![], |row| {
+        Ok(item::Stats {
+            stat_type: row.get(0)?,
+            count: row.get(1)?,
+        })
+    })?;
+
+    let mut stdout = io::BufWriter::new(io::stdout());
+    let row = "-".repeat(28);
+    let mut header_printed = false;
+    for stat in stat_iter {
+        let tmp = stat.unwrap();
+        if !header_printed {
+            tmp.print_header(&mut stdout, &row).unwrap();
+            header_printed = true;
+        }
+        tmp.print_content(&mut stdout).unwrap();
     }
 
     Ok(())
