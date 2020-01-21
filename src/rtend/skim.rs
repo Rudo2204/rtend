@@ -4,13 +4,27 @@ use regex::Regex;
 use rusqlite::{self, params, Connection};
 use skim::{Skim, SkimOptionsBuilder};
 use std::io::{self, Cursor, Read, Seek, SeekFrom};
-use std::process;
-use std::str::FromStr;
+use std::{env, process, str::FromStr};
 use tempfile;
 
+static PREVIEW_COMMAND: &str = "list --entity {2} -vv";
+
 pub fn skim(conn: Connection) {
+    let full_preview_command: String;
+    match env::current_exe() {
+        Ok(exe_path) => {
+            full_preview_command = format!("{} {}", exe_path.display(), PREVIEW_COMMAND)
+        }
+        Err(e) => {
+            eprintln!("Could not get the current path, error: {}", e);
+            process::exit(1);
+        }
+    }
+
     let options = SkimOptionsBuilder::default()
+        .preview(Some(&full_preview_command))
         .preview_window(Some("down:50%"))
+        .multi(false)
         .header_lines(2)
         .tabstop(Some("4"))
         .build()
