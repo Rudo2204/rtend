@@ -68,7 +68,7 @@ fn main() {
         }
 
         ("skim", Some(_skim_matches)) => {
-            skim::skim(conn);
+            skim::skim();
         }
 
         // The program actually never reaches here because of yaml settings
