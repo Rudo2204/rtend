@@ -111,7 +111,7 @@ subcommands:
                     - list_snippet
                     - list_relation
                     - list_relation_snippet
-                    - list_stat
+                    - list_stats
             - list_alias:
                 help: Lists aliases of an entity
                 short: a
@@ -123,7 +123,7 @@ subcommands:
                     - list_snippet
                     - list_relation
                     - list_relation_snippet
-                    - list_stat
+                    - list_stats
             - list_snippet:
                 help: Lists snippets of an entity
                 short: s
@@ -135,7 +135,7 @@ subcommands:
                     - list_alias
                     - list_relation
                     - list_relation_snippet
-                    - list_stat
+                    - list_stats
             - list_relation:
                 help: Lists relations of an entity
                 short: r
@@ -147,7 +147,7 @@ subcommands:
                     - list_alias
                     - list_snippet
                     - list_relation_snippet
-                    - list_stat
+                    - list_stats
             - list_relation_snippet:
                 help: Lists relation snippets of an entity
                 short: d
@@ -159,10 +159,10 @@ subcommands:
                     - list_alias
                     - list_snippet
                     - list_relation
-                    - list_stat
-            - list_stat:
-                help: Lists quick stats about the database
-                long: stat
+                    - list_stats
+            - list_stats:
+                help: Lists stats about the database
+                long: stats
                 conflicts_with:
                     - list_entity
                     - list_alias

@@ -84,11 +84,11 @@ pub fn list(args: &ArgMatches, conn: Connection) {
                 process::exit(1);
             }
         }
-    } else if args.is_present("list_stat") {
-        match list_stat(conn) {
+    } else if args.is_present("list_stats") {
+        match list_stats(conn) {
             Ok(()) => (),
             Err(e) => {
-                eprintln!("Could not list stat, error: {}", e);
+                eprintln!("Could not list stats, error: {}", e);
                 process::exit(1);
             }
         }
@@ -365,7 +365,7 @@ fn list_relation_snippet(conn: Connection, relation_id: u32) -> rusqlite::Result
     Ok(())
 }
 
-fn list_stat(conn: Connection) -> rusqlite::Result<()> {
+fn list_stats(conn: Connection) -> rusqlite::Result<()> {
     let mut stmt = conn.prepare(
         "SELECT 'Entities', count(*) from entity
         UNION ALL
