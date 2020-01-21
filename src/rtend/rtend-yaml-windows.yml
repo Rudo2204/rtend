@@ -96,10 +96,15 @@ subcommands:
             - DisableVersion
         args:
             - verbose:
-                help: "Increases verbosity level\nUse with --entity or --relation"
+                help: "Increases verbosity level\nUse with --entity or --relation\nOr as a standalone flag"
                 short: v
                 long: verbose
                 multiple: true
+                conflicts_with:
+                    - list_alias
+                    - list_snippet
+                    - list_stats
+                    - list_relation_snippet
             - list_entity:
                 help: Lists information about an entity
                 short: e
