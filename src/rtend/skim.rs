@@ -50,12 +50,20 @@ pub fn skim() {
     }
 
     let re = Regex::new(r"^\s?(\d{1,5})").unwrap();
-    let entity_id = re
-        .captures(&entry_selected)
-        .expect("Could not capture entity_id in output")
-        .get(1)
-        .expect("Could not get entity_id from capture group 1")
-        .as_str();
+    let regex_entity_id = re.captures(&entry_selected);
+    let entity_id;
+    match regex_entity_id {
+        None => {
+            eprintln!("The selected line does not have a valid entity_id");
+            process::exit(1);
+        }
+        Some(capture_groups) => {
+            entity_id = capture_groups
+                .get(1)
+                .expect("Could not get entity_id from capture group 1")
+                .as_str()
+        }
+    };
 
     process::Command::new(&exe_path)
         .arg("list")
