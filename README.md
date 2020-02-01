@@ -27,7 +27,7 @@ OPTIONS:
 SUBCOMMANDS:
     add       Adds new things
     delete    Deletes things in the database
-    edit      Edit things in the database
+    edit      Edits things in the database
     find      Finds a thing given its information
     init      Initializes the database
     list      Lists information about things
