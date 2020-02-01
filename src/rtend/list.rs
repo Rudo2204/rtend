@@ -98,7 +98,7 @@ pub fn list(args: &ArgMatches, conn: Connection) {
 fn list_verbose(conn: Connection) -> rusqlite::Result<()> {
     let mut stmt = conn.prepare("
         SELECT id,
-        (SELECT substr(group_concat(name, '; '), 0, 40) from alias where entity_id = entity.id limit 4) as alias_list,
+        (SELECT substr(group_concat(name, '; '), 0, 1000) from alias where entity_id = entity.id limit 4) as alias_list,
         (SELECT count(*) from alias where entity_id = entity.id) as alias_count,
         (SELECT count(*) from snippet where entity_id = entity.id) as snippet_count,
         created
@@ -152,7 +152,7 @@ fn list_entity(conn: Connection, entity_id: u32, verbosity_level: u64) -> rusqli
     } else if verbosity_level == 1 {
         let mut stmt = conn.prepare("
         SELECT id,
-        (SELECT substr(group_concat(name, '; '), 0, 40) from alias where entity_id = entity.id limit 4) as alias_list,
+        (SELECT substr(group_concat(name, '; '), 0, 1000) from alias where entity_id = entity.id limit 4) as alias_list,
         (SELECT count(*) from alias where entity_id = entity.id) as alias_count,
         (SELECT count(*) from snippet where entity_id = entity.id) as snippet_count,
         created
