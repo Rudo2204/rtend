@@ -175,7 +175,7 @@ subcommands:
                     - list_relation
                     - list_relation_snippet
     - find:
-        about: Finds a thing given its information
+        about: Finds thing by its information
         settings:
             - ArgRequiredElseHelp
             - DisableVersion
@@ -226,7 +226,7 @@ subcommands:
                     - find_relation
                     - find_snippet
     - delete:
-        about: Deletes things in the database
+        about: Deletes things
         settings:
             - ArgRequiredElseHelp
             - DisableVersion
@@ -291,7 +291,7 @@ subcommands:
                     - delete_snippet
                     - delete_relation
     - edit:
-        about: Edits things in the database
+        about: Edits things
         settings:
             - ArgRequiredElseHelp
             - DisableVersion

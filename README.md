@@ -8,30 +8,84 @@ License: [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg
 My rust implementation of the original [isaac's tend](https://github.com/isaacmorneau/tend/).\
 It's basically a simple rust wrapper for sqlite, it makes a nice CLI note taking program.
 
-## Overview
+## Usage
 ```
-rtend 0.1.4
-rudo2204 <rudo2204@gmail.com>
+rtend v0.1.4
 Simple CLI note taking program
 
 USAGE:
     rtend [OPTIONS] <SUBCOMMAND>
 
-FLAGS:
-    -h, --help       Prints help information
-    -V, --version    Prints version information
-
-OPTIONS:
-    -p, --profile <name>    Temporarily operates on a different database
+GLOBAL OPTIONS:
+        -p, --profile <name>    Temporarily operates on a different database
 
 SUBCOMMANDS:
-    add       Adds new things
-    delete    Deletes things in the database
-    edit      Edits things in the database
-    find      Finds a thing given its information
     init      Initializes the database
-    list      Lists information about things
     skim      Skims over the database
+
+------------------------------------------------------------------
+    rtend add [OPTIONS] -- Adds new things
+
+FLAGS:
+    -h, --help    Prints help information
+
+OPTIONS:
+    -a, --alias <entity_id> <name>                Adds an alias to an entity
+    -e, --entity <name>                           Adds a new entity
+    -r, --relation <entity_id_a> <entity_id_b>    Adds a relation between two entities
+    -d, --relation-snippet <relation_id>          Adds a snippet to a relation
+    -s, --snippet <entity_id>                     Adds a snippet to an entity
+
+------------------------------------------------------------------
+    rtend delete [FLAGS] [OPTIONS] -- Deletes things
+
+FLAGS:
+    -f, --force    Force delete everything related to the command
+                   Use with --entity or --relation
+
+OPTIONS:
+    -a, --alias <alias_id>                          Deletes an alias
+    -e, --entity <entity_id>                        Deletes an entity
+    -r, --relation <relation_id>                    Deletes a relation
+    -d, --relation-snippet <relation_snippet_id>    Deletes a relation snippet
+    -s, --snippet <snippet_id>                      Deletes a snippet
+
+------------------------------------------------------------------
+    rtend edit [OPTIONS] -- Edits things
+
+OPTIONS:
+    -a, --alias <alias_id>                          Edits an alias
+    -d, --relation-snippet <relation_snippet_id>    Edits a relation snippet
+    -s, --snippet <snippet_id>                      Edits a snippet
+
+------------------------------------------------------------------
+    rtend find [FLAGS] [OPTIONS] -- Finds thing by its information
+
+FLAGS:
+    -v, --verbose    Increases verbosity level
+                     Use with --alias or --relation
+
+OPTIONS:
+    -a, --alias <name>                 Finds an entity by alias
+    -r, --relation <entity_id>         Finds an relation by entity id
+    -d, --relation-snippet <string>    Finds an entity by its relation snippet
+    -s, --snippet <string>             Finds an entity by its snippet
+
+------------------------------------------------------------------
+    rtend list [FLAGS] [OPTIONS] -- Lists information about things
+
+FLAGS:
+        --stats      Lists stats about the database
+    -v, --verbose    Increases verbosity level
+                     Use with --entity or --relation
+                     Or as a standalone flag
+
+OPTIONS:
+    -a, --alias <entity_id>                 Lists aliases of an entity
+    -e, --entity <entity_id>                Lists information about an entity
+    -r, --relation <relation_id>            Lists relations of an entity
+    -d, --relation-snippet <relation_id>    Lists relation snippets of an entity
+    -s, --snippet <entity_id>               Lists snippets of an entity
 ```
 # Installation
 Head to `releases` tab and download the pre-compiled binary of your machine's architecture or clone the repo then compile it yourself with `cargo`.
