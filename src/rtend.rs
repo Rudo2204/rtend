@@ -146,8 +146,8 @@ OPTIONS:
             list::list(list_matches, conn);
         }
 
-        ("skim", Some(_skim_matches)) => {
-            skim::skim();
+        ("skim", Some(skim_matches)) => {
+            skim::skim(skim_matches);
         }
 
         // The program actually never reaches here because of yaml settings

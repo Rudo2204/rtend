@@ -1,18 +1,26 @@
 #![cfg(target_family = "unix")]
+use clap::ArgMatches;
 use regex::Regex;
 use skim::{Skim, SkimOptionsBuilder};
 use std::{env, io::Cursor, path, process};
 
-static PREVIEW_COMMAND: &str = "list --entity {2} -vv";
+const DEFAULT_PREVIEW_COMMAND: &str = "list --entity {2} -vv";
 
-pub fn skim() {
+pub fn skim(args: &ArgMatches) {
     let full_preview_command: String;
     let exe_path: path::PathBuf;
+    let mut db: &str = "notes";
+    let mut preview_command: String = DEFAULT_PREVIEW_COMMAND.to_string();
+
+    if args.is_present("profile") {
+        db = args.value_of("profile").unwrap();
+        preview_command = format!("--profile {} {}", db, DEFAULT_PREVIEW_COMMAND);
+    }
 
     match env::current_exe() {
         Ok(path) => {
             exe_path = path;
-            full_preview_command = format!("{} {}", exe_path.display(), PREVIEW_COMMAND)
+            full_preview_command = format!("{} {}", exe_path.display(), preview_command)
         }
         Err(e) => {
             eprintln!("Could not get the current path, error: {}", e);
@@ -30,6 +38,8 @@ pub fn skim() {
         .unwrap();
 
     let buf = process::Command::new(&exe_path)
+        .arg("--profile")
+        .arg(db)
         .arg("list")
         .arg("-v")
         .output()
@@ -66,6 +76,8 @@ pub fn skim() {
     };
 
     process::Command::new(&exe_path)
+        .arg("--profile")
+        .arg(db)
         .arg("list")
         .arg("-e")
         .arg(entity_id)
