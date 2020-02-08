@@ -4,12 +4,13 @@ use regex::Regex;
 use skim::{Skim, SkimOptionsBuilder};
 use std::{env, io::Cursor, path, process};
 
+const DEFAULT_DATABSE: &str = "notes";
 const DEFAULT_PREVIEW_COMMAND: &str = "list --entity {2} -vv";
 
 pub fn skim(args: &ArgMatches) {
     let full_preview_command: String;
     let exe_path: path::PathBuf;
-    let mut db: &str = "notes";
+    let mut db: &str = DEFAULT_DATABSE;
     let mut preview_command: String = DEFAULT_PREVIEW_COMMAND.to_string();
 
     if args.is_present("profile") {

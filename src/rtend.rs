@@ -2,6 +2,9 @@ use clap::{load_yaml, App};
 use rusqlite::Connection;
 use std::{process, unreachable};
 
+// By default the program operates on the database `notes.db`
+const DEFAULT_DATABSE: &str = "notes";
+
 #[cfg(target_family = "unix")]
 use rtend::{add, delete, edit, find, list, skim, utils};
 
@@ -95,9 +98,9 @@ OPTIONS:
         )
         .get_matches();
 
-    // By default the program operates on the database `notes.db`
-    // It would switch to whatever database if user uses the --profile flag
-    let mut db = "notes.db".to_string();
+    // The program would switch to whatever database if user uses the --profile flag
+    // instead of using the default database which is "notes.db"
+    let mut db = format!("{}.db", DEFAULT_DATABSE);
     if matches.is_present("profile") {
         db = format!("{}.db", matches.value_of("profile").unwrap());
     }
@@ -116,7 +119,7 @@ OPTIONS:
 
     let conn = Connection::open(&utils::find_data_dir().unwrap().join(&db)).unwrap_or_else(|err| {
         eprintln!("Could not open database! Error: {}", err);
-        process::exit(1)
+        process::exit(1);
     });
 
     // Then check every other subcommands
