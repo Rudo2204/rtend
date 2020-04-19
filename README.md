@@ -97,6 +97,12 @@ OPTIONS:
 
 Head to `releases` tab and download the pre-compiled binary of your machine's architecture or clone the repo then compile it yourself with `cargo`.
 
+## Database schema
+
+Here's an entity-relationship diagram of the schema used for the database:
+
+![](schema.png)
+
 ## FAQ
 
 ### I don't see the skim feature!
