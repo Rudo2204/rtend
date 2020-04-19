@@ -26,4 +26,4 @@ scrawl = "1.1"
 regex = "1"
 
 [target.'cfg(unix)'.dependencies]
-skim = "0.7"
+skim = "0.8"

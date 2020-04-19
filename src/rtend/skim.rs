@@ -1,7 +1,7 @@
 #![cfg(target_family = "unix")]
 use clap::ArgMatches;
 use regex::Regex;
-use skim::{Skim, SkimOptionsBuilder};
+use skim::prelude::{Skim, SkimItemReader, SkimOptionsBuilder};
 use std::{env, io::Cursor, path, process};
 
 const DEFAULT_DATABSE: &str = "notes";
@@ -47,7 +47,10 @@ pub fn skim(args: &ArgMatches) {
         .unwrap()
         .stdout;
 
-    let selected_items = Skim::run_with(&options, Some(Box::new(Cursor::new(buf))))
+    let item_reader = SkimItemReader::default();
+    let items = item_reader.of_bufread(Cursor::new(buf));
+
+    let selected_items = Skim::run_with(&options, Some(items))
         .map(|out| out.selected_items)
         .unwrap_or_else(|| Vec::new());
 
@@ -57,7 +60,7 @@ pub fn skim(args: &ArgMatches) {
         None => {
             process::exit(1);
         }
-        Some(item) => entry_selected = item.get_output_text().to_string(),
+        Some(item) => entry_selected = item.output().to_string(),
     }
 
     let re = Regex::new(r"^\s?(\d{1,5})").unwrap();
