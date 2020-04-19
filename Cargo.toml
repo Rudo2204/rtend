@@ -18,7 +18,7 @@ path = "src/rtend.rs"
 [dependencies]
 clap = {version = "2.33", features = ["yaml"]}
 directories = "2.0"
-rusqlite = {version = "0.20", features = ["bundled"]}
+rusqlite = {version = "0.22", features = ["bundled"]}
 time = "0.1"
 atty = "0.2"
 textwrap = "0.11"
