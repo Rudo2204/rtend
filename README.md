@@ -33,15 +33,20 @@ SUBCOMMANDS:
     list      Lists information about things
     skim      Skims over the database
 ```
-# Installation
+
+## Installation
+
 Head to `releases` tab and download the pre-compiled binary of your machine's architecture or clone the repo then compile it yourself with `cargo`.
 
-# FAQ
+## FAQ
+
 ### I don't see the skim feature!
+
 Windows targets lack the `skim` feature due to the crate [skim](https://github.com/lotabout/skim) not supporting Windows.\
 [Check issue #3](https://github.com/Rudo2204/rtend/issues/3) for an alternate way to implement this feature.
 
 ### Where are my databases located?
+
 | Platform | Value                             | Example                                  |
 |----------|-----------------------------------|------------------------------------------|
 | Linux    | $XDG_DATA_HOME or $HOME           | /home/alice/.local/share                 |
@@ -49,10 +54,12 @@ Windows targets lack the `skim` feature due to the crate [skim](https://github.c
 | Windows  | {FOLDERID_RoamingAppData}         | C:\Users\Alice\AppData\Roaming           |
 
 ### FreeBSD is not supported?
+
 I ran a build in CI (See build [#1.18](https://travis-ci.com/Rudo2204/rtend/jobs/277481017) and [#1.19](https://travis-ci.com/Rudo2204/rtend/jobs/277481018)) and it looks like it fails to compile on FreeBSD but it works fine on NetBSD (See build [#1.20](https://travis-ci.com/Rudo2204/rtend/jobs/277481019)).\
 I don't know how to fix this, looking for someone to point me to the right direction.
 
-# Contribute
+## Contribute
+
 This is my first Rust project so it probably has some (nasty) bugs in it.\
 [Create new issue](https://github.com/Rudo2204/rtend/issues) if you meet any bugs or have any ideas.\
 Pull requests are welcomed.
