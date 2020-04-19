@@ -38,7 +38,7 @@ SUBCOMMANDS:
     skim      Skims over the database
 
 ------------------------------------------------------------------
-    rtend add [OPTIONS] -- Adds new things
+rtend add [OPTIONS] -- Adds new things
 
 FLAGS:
     -h, --help    Prints help information
@@ -51,7 +51,7 @@ OPTIONS:
     -s, --snippet <entity_id>                     Adds a snippet to an entity
 
 ------------------------------------------------------------------
-    rtend delete [FLAGS] [OPTIONS] -- Deletes things
+rtend delete [FLAGS] [OPTIONS] -- Deletes things
 
 FLAGS:
     -f, --force    Force delete everything related to the command
@@ -65,7 +65,7 @@ OPTIONS:
     -s, --snippet <snippet_id>                      Deletes a snippet
 
 ------------------------------------------------------------------
-    rtend edit [OPTIONS] -- Edits things
+rtend edit [OPTIONS] -- Edits things
 
 OPTIONS:
     -a, --alias <alias_id>                          Edits an alias
@@ -73,7 +73,7 @@ OPTIONS:
     -s, --snippet <snippet_id>                      Edits a snippet
 
 ------------------------------------------------------------------
-    rtend find [FLAGS] [OPTIONS] -- Finds thing by its information
+rtend find [FLAGS] [OPTIONS] -- Finds thing by its information
 
 FLAGS:
     -v, --verbose    Increases verbosity level
@@ -86,7 +86,7 @@ OPTIONS:
     -s, --snippet <string>             Finds an entity by its snippet
 
 ------------------------------------------------------------------
-    rtend list [FLAGS] [OPTIONS] -- Lists information about things
+rtend list [FLAGS] [OPTIONS] -- Lists information about things
 
 FLAGS:
         --stats      Lists stats about the database
