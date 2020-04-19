@@ -29,7 +29,12 @@ GLOBAL OPTIONS:
     {options}
 
 SUBCOMMANDS:
+    add       Adds new things
+    delete    Deletes things
+    edit      Edits things
+    find      Finds thing by its information
     init      Initializes the database
+    list      Lists information about things
     skim      Skims over the database
 
 ------------------------------------------------------------------
