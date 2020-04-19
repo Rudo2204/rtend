@@ -20,63 +20,68 @@ GLOBAL OPTIONS:
         -p, --profile <name>    Temporarily operates on a different database
 
 SUBCOMMANDS:
-    init      Initializes the database
-    skim      Skims over the database
+    add       Add new things
+    delete    Delete things
+    edit      Edit things
+    find      Find thing by its information
+    init      Initialize the database
+    list      List information about things
+    skim      Skim over the database
 
 ------------------------------------------------------------------
-    rtend add [OPTIONS] -- Adds new things
+rtend add [OPTIONS] -- Add new things
 
 FLAGS:
     -h, --help    Prints help information
 
 OPTIONS:
-    -a, --alias <entity_id> <name>                Adds an alias to an entity
-    -e, --entity <name>                           Adds a new entity
-    -r, --relation <entity_id_a> <entity_id_b>    Adds a relation between two entities
-    -d, --relation-snippet <relation_id>          Adds a snippet to a relation
-    -s, --snippet <entity_id>                     Adds a snippet to an entity
+    -a, --alias <entity_id> <name>                Add an alias to an entity
+    -e, --entity <name>                           Add a new entity
+    -r, --relation <entity_id_a> <entity_id_b>    Add a relation between two entities
+    -d, --relation-snippet <relation_id>          Add a snippet to a relation
+    -s, --snippet <entity_id>                     Add a snippet to an entity
 
 ------------------------------------------------------------------
-    rtend delete [FLAGS] [OPTIONS] -- Deletes things
+rtend delete [FLAGS] [OPTIONS] -- Delete things
 
 FLAGS:
     -f, --force    Force delete everything related to the command
                    Use with --entity or --relation
 
 OPTIONS:
-    -a, --alias <alias_id>                          Deletes an alias
-    -e, --entity <entity_id>                        Deletes an entity
-    -r, --relation <relation_id>                    Deletes a relation
-    -d, --relation-snippet <relation_snippet_id>    Deletes a relation snippet
-    -s, --snippet <snippet_id>                      Deletes a snippet
+    -a, --alias <alias_id>                          Delete an alias
+    -e, --entity <entity_id>                        Delete an entity
+    -r, --relation <relation_id>                    Delete a relation
+    -d, --relation-snippet <relation_snippet_id>    Delete a relation snippet
+    -s, --snippet <snippet_id>                      Delete a snippet
 
 ------------------------------------------------------------------
-    rtend edit [OPTIONS] -- Edits things
+rtend edit [OPTIONS] -- Edit things
 
 OPTIONS:
-    -a, --alias <alias_id>                          Edits an alias
-    -d, --relation-snippet <relation_snippet_id>    Edits a relation snippet
-    -s, --snippet <snippet_id>                      Edits a snippet
+    -a, --alias <alias_id>                          Edit an alias
+    -d, --relation-snippet <relation_snippet_id>    Edit a relation snippet
+    -s, --snippet <snippet_id>                      Edit a snippet
 
 ------------------------------------------------------------------
-    rtend find [FLAGS] [OPTIONS] -- Finds thing by its information
+rtend find [FLAGS] [OPTIONS] -- Find thing by its information
 
 FLAGS:
-    -v, --verbose    Increases verbosity level
+    -v, --verbose    Increase verbosity level
                      Use with --alias or --relation
 
 OPTIONS:
-    -a, --alias <name>                 Finds an entity by alias
-    -r, --relation <entity_id>         Finds an relation by entity id
-    -d, --relation-snippet <string>    Finds an entity by its relation snippet
-    -s, --snippet <string>             Finds an entity by its snippet
+    -a, --alias <name>                 Find an entity by alias
+    -r, --relation <entity_id>         Find an relation by entity id
+    -d, --relation-snippet <string>    Find an entity by its relation snippet
+    -s, --snippet <string>             Find an entity by its snippet
 
 ------------------------------------------------------------------
-    rtend list [FLAGS] [OPTIONS] -- Lists information about things
+rtend list [FLAGS] [OPTIONS] -- List information about things
 
 FLAGS:
-        --stats      Lists stats about the database
-    -v, --verbose    Increases verbosity level
+        --stats      List stats about the database
+    -v, --verbose    Increase verbosity level
                      Use with --entity or --relation
                      Or as a standalone flag
 
