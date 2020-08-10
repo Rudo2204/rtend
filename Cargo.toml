@@ -17,13 +17,13 @@ path = "src/rtend.rs"
 
 [dependencies]
 clap = {version = "2.33", features = ["yaml"]}
-directories = "2.0"
-rusqlite = {version = "0.20", features = ["bundled"]}
-time = "0.1"
+directories = "3.0"
+rusqlite = {version = "0.23", features = ["bundled"]}
+time = "0.2"
 atty = "0.2"
-textwrap = "0.11"
+textwrap = "0.12"
 scrawl = "1.1"
 regex = "1"
 
 [target.'cfg(unix)'.dependencies]
-skim = "0.7"
+skim = "0.8"
