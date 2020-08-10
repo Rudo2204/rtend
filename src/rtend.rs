@@ -1,4 +1,4 @@
-use clap::{load_yaml, App};
+use clap::{crate_version, load_yaml, App};
 use rusqlite::Connection;
 use std::{process, unreachable};
 
@@ -97,6 +97,7 @@ OPTIONS:
     -s, --snippet <entity_id>               Lists snippets of an entity"#,
         )
         .get_matches();
+    let matches = App::from_yaml(yml).version(crate_version!()).get_matches();
 
     // The program would switch to whatever database if user uses the --profile flag
     // instead of using the default database which is "notes.db"
