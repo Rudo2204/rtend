@@ -1,10 +1,10 @@
 use std::io::{self, Write};
 use textwrap;
-use time::{self, Timespec};
+use time::{Format, OffsetDateTime};
 
 pub struct Entity {
     pub id: u32,
-    pub created: Timespec,
+    pub created: OffsetDateTime,
 }
 
 pub struct EntityLong {
@@ -12,33 +12,33 @@ pub struct EntityLong {
     pub alias_list: String,
     pub alias_count: u32,
     pub snippet_count: u32,
-    pub created: Timespec,
+    pub created: OffsetDateTime,
 }
 
 pub struct EntityLongLong {
     pub id: u32,
     pub data_type: String,
     pub data: String,
-    pub last_modified: Timespec,
+    pub last_modified: OffsetDateTime,
 }
 
 pub struct Alias {
     pub id: u32,
     pub name: String,
-    pub updated: Timespec,
+    pub updated: OffsetDateTime,
 }
 
 pub struct Snippet {
     pub id: u32,
     pub data: String,
-    pub updated: Timespec,
+    pub updated: OffsetDateTime,
 }
 
 pub struct Relation {
     pub id: u32,
     pub entity_id_a: u32,
     pub entity_id_b: u32,
-    pub updated: Timespec,
+    pub updated: OffsetDateTime,
 }
 
 pub struct RelationLong {
@@ -47,20 +47,20 @@ pub struct RelationLong {
     pub alias_list_a: String,
     pub entity_id_b: u32,
     pub alias_list_b: String,
-    pub updated: Timespec,
+    pub updated: OffsetDateTime,
 }
 
 pub struct RelationSnippet {
     pub id: u32,
     pub data: String,
-    pub updated: Timespec,
+    pub updated: OffsetDateTime,
 }
 
 pub struct EntityFound {
     pub id: u32,
     pub name: String,
     pub entity_id: u32,
-    pub updated: Timespec,
+    pub updated: OffsetDateTime,
 }
 
 pub struct EntityFoundLong {
@@ -68,21 +68,21 @@ pub struct EntityFoundLong {
     pub name: String,
     pub entity_id: u32,
     pub other_alias: String,
-    pub updated: Timespec,
+    pub updated: OffsetDateTime,
 }
 
 pub struct SnippetFound {
     pub id: u32,
     pub data: String,
     pub entity_id: u32,
-    pub updated: Timespec,
+    pub updated: OffsetDateTime,
 }
 
 pub struct RelationSnippetFound {
     pub id: u32,
     pub data: String,
     pub relation_id: u32,
-    pub updated: Timespec,
+    pub updated: OffsetDateTime,
 }
 
 pub struct Stats {
@@ -102,7 +102,7 @@ impl Entity {
             sink,
             " {:<6} {:^28}",
             self.id,
-            time::at(self.created).rfc3339()
+            self.created.format(Format::Rfc3339),
         )
     }
 }
@@ -127,7 +127,7 @@ impl EntityLong {
             wrapped_data[0],
             self.alias_count,
             self.snippet_count,
-            time::at(self.created).rfc3339()
+            self.created.format(Format::Rfc3339),
         )
         .unwrap();
 
@@ -157,7 +157,7 @@ impl EntityLongLong {
                 self.id,
                 self.data_type,
                 wrapped_data[0],
-                time::at(self.last_modified).rfc3339()
+                self.last_modified.format(Format::Rfc3339),
             )
             .unwrap();
 
@@ -176,7 +176,7 @@ impl EntityLongLong {
                 self.id,
                 self.data_type,
                 self.data,
-                time::at(self.last_modified).rfc3339()
+                self.last_modified.format(Format::Rfc3339),
             )
             .unwrap();
         }
@@ -197,7 +197,7 @@ impl Alias {
             " {:<45} {:<6} {:^28}",
             self.name,
             self.id,
-            time::at(self.updated).rfc3339()
+            self.updated.format(Format::Rfc3339),
         )
     }
 }
@@ -222,7 +222,7 @@ impl Snippet {
                 " {:<45} {:<6} {:^28}",
                 wrapped_data[0],
                 self.id,
-                time::at(self.updated).rfc3339()
+                self.updated.format(Format::Rfc3339),
             )
             .unwrap();
 
@@ -235,7 +235,7 @@ impl Snippet {
                 " {:<45} {:<6} {:^28}",
                 self.data,
                 self.id,
-                time::at(self.updated).rfc3339()
+                self.updated.format(Format::Rfc3339),
             )
             .unwrap();
         }
@@ -261,7 +261,7 @@ impl Relation {
             self.id,
             self.entity_id_a,
             self.entity_id_b,
-            time::at(self.updated).rfc3339()
+            self.updated.format(Format::Rfc3339),
         )
     }
 }
@@ -286,7 +286,7 @@ impl RelationLong {
             textwrap::wrap(&self.alias_list_a, 18)[0],
             self.entity_id_b,
             textwrap::wrap(&self.alias_list_b, 18)[0],
-            time::at(self.updated).rfc3339()
+            self.updated.format(Format::Rfc3339),
         )
     }
 }
@@ -311,7 +311,7 @@ impl RelationSnippet {
                 " {:<45} {:<6} {:^28}",
                 wrapped_data[0],
                 self.id,
-                time::at(self.updated).rfc3339()
+                self.updated.format(Format::Rfc3339),
             )
             .unwrap();
 
@@ -324,7 +324,7 @@ impl RelationSnippet {
                 " {:<45} {:<6} {:^28}",
                 self.data,
                 self.id,
-                time::at(self.updated).rfc3339()
+                self.updated.format(Format::Rfc3339),
             )
             .unwrap();
         }
@@ -350,7 +350,7 @@ impl EntityFound {
             self.name,
             self.id,
             self.entity_id,
-            time::at(self.updated).rfc3339()
+            self.updated.format(Format::Rfc3339),
         )
     }
 }
@@ -374,7 +374,7 @@ impl EntityFoundLong {
             self.id,
             self.entity_id,
             self.other_alias,
-            time::at(self.updated).rfc3339()
+            self.updated.format(Format::Rfc3339),
         )
     }
 }
@@ -400,7 +400,7 @@ impl SnippetFound {
                 wrapped_data[0],
                 self.id,
                 self.entity_id,
-                time::at(self.updated).rfc3339()
+                self.updated.format(Format::Rfc3339),
             )
             .unwrap();
 
@@ -414,7 +414,7 @@ impl SnippetFound {
                 self.data,
                 self.id,
                 self.entity_id,
-                time::at(self.updated).rfc3339()
+                self.updated.format(Format::Rfc3339),
             )
             .unwrap();
         }
@@ -443,7 +443,7 @@ impl RelationSnippetFound {
                 wrapped_data[0],
                 self.id,
                 self.relation_id,
-                time::at(self.updated).rfc3339()
+                self.updated.format(Format::Rfc3339),
             )
             .unwrap();
 
@@ -457,7 +457,7 @@ impl RelationSnippetFound {
                 self.data,
                 self.id,
                 self.relation_id,
-                time::at(self.updated).rfc3339()
+                self.updated.format(Format::Rfc3339),
             )
             .unwrap();
         }
