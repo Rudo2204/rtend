@@ -116,9 +116,9 @@ jobs:
             ~/.cargo/registry
             ~/.cargo/git
             target
-          key: ${{ runner.os }}-check-${{ hashFiles('**/Cargo.lock') }}
+          key: ${{ runner.os }}-release-${{ hashFiles('**/Cargo.lock') }}
           restore-keys: |
-            ${{ runner.os }}-check-
+            ${{ runner.os }}-release-
 
       - uses: actions-rs/toolchain@v1
         with:
