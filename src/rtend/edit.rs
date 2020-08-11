@@ -1,6 +1,5 @@
 use clap::ArgMatches;
 use rusqlite::{self, params, Connection};
-use scrawl;
 use std::{process, str::FromStr};
 
 pub fn edit(args: &ArgMatches, conn: Connection) {

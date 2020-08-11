@@ -1,5 +1,4 @@
 use directories::ProjectDirs;
-use rusqlite;
 use rusqlite::{Connection, NO_PARAMS};
 use std::{
     convert::TryInto,
