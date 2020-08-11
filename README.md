@@ -59,11 +59,6 @@ Windows targets lack the `skim` feature due to the crate [skim](https://github.c
 | OSX      | $HOME/Library/Application Support | /Users/Alice/Library/Application Support |
 | Windows  | {FOLDERID_RoamingAppData}         | C:\Users\Alice\AppData\Roaming           |
 
-### FreeBSD is not supported?
-
-I ran a build in CI (See build [#1.18](https://travis-ci.com/Rudo2204/rtend/jobs/277481017) and [#1.19](https://travis-ci.com/Rudo2204/rtend/jobs/277481018)) and it looks like it fails to compile on FreeBSD but it works fine on NetBSD (See build [#1.20](https://travis-ci.com/Rudo2204/rtend/jobs/277481019)).\
-I don't know how to fix this, looking for someone to point me to the right direction.
-
 ## Contribute
 
 This is my first Rust project so it probably has some (nasty) bugs in it.\
