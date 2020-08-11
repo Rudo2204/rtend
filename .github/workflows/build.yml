@@ -144,11 +144,9 @@ jobs:
           override: true
 
       - uses: actions-rs/cargo@v1
-        env:
-          CRATE_NAME: ${{ steps.set_crate_name.outputs.CRATE_NAME }}
         with:
           command: build
-          args: --bin $CRATE_NAME --release --locked
+          args: --bin ${{ steps.set_crate_name.outputs.CRATE_NAME }} --release --locked
 
       - uses: svenstaro/upx-action@2.0.1
         with:
