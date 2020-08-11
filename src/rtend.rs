@@ -43,6 +43,7 @@ fn main() {
         process::exit(1);
     });
 
+    #[cfg(target_family = "unix")]
     let term_width = utils::get_term_width();
 
     // Then check every other subcommands
@@ -72,9 +73,40 @@ fn main() {
             list::list(list_matches, conn);
         }
 
-        #[cfg(target_family = "unix")]
         ("skim", Some(skim_matches)) => {
             skim::skim(skim_matches, term_width, conn);
+        }
+
+        // The program actually never reaches here because of yaml settings
+        ("", None) => println!("Run the program with --help to get started"),
+        _ => unreachable!(),
+    }
+
+    // Windows targets don't get skim feature
+    #[cfg(target_family = "windows")]
+    match matches.subcommand() {
+        ("add", Some(add_matches)) => {
+            add::add(add_matches, conn);
+        }
+
+        ("delete", Some(delete_matches)) => {
+            delete::delete(delete_matches, conn);
+        }
+
+        ("edit", Some(edit_matches)) => {
+            edit::edit(edit_matches, conn);
+        }
+
+        ("find", Some(find_matches)) => {
+            find::find(find_matches, conn);
+        }
+
+        // It was already hanlded in the above code, it still needs to be here though
+        // else the program would panic because of unreachable code
+        ("init", Some(_init_matches)) => {}
+
+        ("list", Some(list_matches)) => {
+            list::list(list_matches, conn);
         }
 
         // The program actually never reaches here because of yaml settings
