@@ -21,7 +21,6 @@ directories = "3.0"
 rusqlite = { git = "https://github.com/rusqlite/rusqlite/", rev = "157256a", features = ["bundled", "time"]}
 time = "0.2"
 atty = "0.2"
-textwrap = "0.12"
 scrawl = "1.1"
 regex = "1"
 comfy-table = "1.0.0"
