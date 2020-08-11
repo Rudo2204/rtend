@@ -5,7 +5,7 @@
 # TODO: Set CRATE_NAME to match the project name
 # TODO: Add `test` and more if you need to.
 # TODO: Change bin to lib or both if you build a library
-name: rtend
+name: CI
 
 on:
   push:

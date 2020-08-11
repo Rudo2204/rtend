@@ -1,8 +1,7 @@
 # rtend
 > My memory is so bad I need to take notes
 
-Unix: [![Build Status](https://travis-ci.com/Rudo2204/rtend.svg?branch=master)](https://travis-ci.com/Rudo2204/rtend)\
-Windows: [![Build status](https://ci.appveyor.com/api/projects/status/3ltt06neh2uns9y0?svg=true)](https://ci.appveyor.com/project/Rudo2204/rtend)\
+CI: [![Build Status](https://github.com/Rudo2204/rtend/workflows/CI/badge.svg)](https://github.com/Rudo2204/rtend/actions)\
 License: [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 
 My rust implementation of the original [isaac's tend](https://github.com/isaacmorneau/tend/).\
