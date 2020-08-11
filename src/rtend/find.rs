@@ -1,8 +1,9 @@
 use clap::ArgMatches;
 use rusqlite::{self, params, Connection};
-use std::{io, process, str::FromStr};
+use std::{process, str::FromStr};
 
 use crate::item;
+use crate::item::ComfyTable;
 
 pub fn find(args: &ArgMatches, conn: Connection) {
     if args.is_present("find_alias") {
@@ -50,9 +51,6 @@ pub fn find(args: &ArgMatches, conn: Connection) {
 }
 
 fn find_alias(conn: Connection, name: &str, verbose: bool) -> rusqlite::Result<()> {
-    let mut stdout = io::BufWriter::new(io::stdout());
-    let mut header_printed = false;
-
     if !verbose {
         let mut stmt = conn.prepare(
             "SELECT id, name, entity_id, updated from alias where name like '%' || ? || '%' order by name",
@@ -67,15 +65,12 @@ fn find_alias(conn: Connection, name: &str, verbose: bool) -> rusqlite::Result<(
             })
         })?;
 
+        let mut tmp_vec = Vec::new();
         for entity in entity_iter {
-            let tmp = entity.unwrap();
-            if !header_printed {
-                let row = "-".repeat(66);
-                tmp.print_header(&mut stdout, &row).unwrap();
-                header_printed = true;
-            }
-            tmp.print_content(&mut stdout).unwrap();
+            tmp_vec.push(entity.unwrap());
         }
+        let cmfs = item::ComfyStruct { data: tmp_vec };
+        cmfs.print_comfy_table();
     } else {
         let mut stmt = conn.prepare(
             "SELECT a.id, a.name, a.entity_id, (SELECT group_concat(b.name, '; ') from alias b
@@ -93,24 +88,18 @@ fn find_alias(conn: Connection, name: &str, verbose: bool) -> rusqlite::Result<(
             })
         })?;
 
+        let mut tmp_vec = Vec::new();
         for entity in entity_iter {
-            let tmp = entity.unwrap();
-            if !header_printed {
-                let row = "-".repeat(79);
-                tmp.print_header(&mut stdout, &row).unwrap();
-                header_printed = true;
-            }
-            tmp.print_content(&mut stdout).unwrap();
+            tmp_vec.push(entity.unwrap());
         }
+        let cmfs = item::ComfyStruct { data: tmp_vec };
+        cmfs.print_comfy_table();
     }
 
     Ok(())
 }
 
 fn find_relation(conn: Connection, entity_id: u32, verbose: bool) -> rusqlite::Result<()> {
-    let mut stdout = io::BufWriter::new(io::stdout());
-    let mut header_printed = false;
-
     if !verbose {
         let mut stmt = conn.prepare(
             "SELECT id, entity_id_a, entity_id_b,
@@ -126,15 +115,12 @@ fn find_relation(conn: Connection, entity_id: u32, verbose: bool) -> rusqlite::R
             })
         })?;
 
+        let mut tmp_vec = Vec::new();
         for relation in relation_iter {
-            let tmp = relation.unwrap();
-            if !header_printed {
-                let row = "-".repeat(60);
-                tmp.print_header(&mut stdout, &row).unwrap();
-                header_printed = true;
-            }
-            tmp.print_content(&mut stdout).unwrap();
+            tmp_vec.push(relation.unwrap());
         }
+        let cmfs = item::ComfyStruct { data: tmp_vec };
+        cmfs.print_comfy_table();
     } else {
         let mut stmt = conn.prepare(
             "SELECT id,
@@ -154,15 +140,12 @@ fn find_relation(conn: Connection, entity_id: u32, verbose: bool) -> rusqlite::R
             })
         })?;
 
+        let mut tmp_vec = Vec::new();
         for relation in relation_iter {
-            let tmp = relation.unwrap();
-            if !header_printed {
-                let row = "-".repeat(80);
-                tmp.print_header(&mut stdout, &row).unwrap();
-                header_printed = true;
-            }
-            tmp.print_content(&mut stdout).unwrap();
+            tmp_vec.push(relation.unwrap());
         }
+        let cmfs = item::ComfyStruct { data: tmp_vec };
+        cmfs.print_comfy_table();
     }
 
     Ok(())
@@ -182,17 +165,13 @@ fn find_snippet(conn: Connection, string: &str) -> rusqlite::Result<()> {
         })
     })?;
 
-    let mut stdout = io::BufWriter::new(io::stdout());
-    let row = "-".repeat(80);
-    let mut header_printed = false;
+    let mut tmp_vec = Vec::new();
     for snippet in snippet_iter {
-        let tmp = snippet.unwrap();
-        if !header_printed {
-            tmp.print_header(&mut stdout, &row).unwrap();
-            header_printed = true;
-        }
-        tmp.print_content(&mut stdout);
+        tmp_vec.push(snippet.unwrap());
     }
+    let cmfs = item::ComfyStruct { data: tmp_vec };
+    cmfs.print_comfy_table();
+
     Ok(())
 }
 
@@ -210,16 +189,12 @@ fn find_relation_snippet(conn: Connection, string: &str) -> rusqlite::Result<()>
         })
     })?;
 
-    let mut stdout = io::BufWriter::new(io::stdout());
-    let row = "-".repeat(80);
-    let mut header_printed = false;
+    let mut tmp_vec = Vec::new();
     for snippet in snippet_iter {
-        let tmp = snippet.unwrap();
-        if !header_printed {
-            tmp.print_header(&mut stdout, &row).unwrap();
-            header_printed = true;
-        }
-        tmp.print_content(&mut stdout);
+        tmp_vec.push(snippet.unwrap());
     }
+    let cmfs = item::ComfyStruct { data: tmp_vec };
+    cmfs.print_comfy_table();
+
     Ok(())
 }

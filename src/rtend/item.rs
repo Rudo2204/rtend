@@ -1,6 +1,8 @@
-use std::io::{self, Write};
-use textwrap;
+use comfy_table::presets::UTF8_FULL;
+use comfy_table::*;
 use time::{Format, OffsetDateTime};
+
+use crate::utils;
 
 pub struct Entity {
     pub id: u32,
@@ -90,389 +92,346 @@ pub struct Stats {
     pub count: u32,
 }
 
-impl Entity {
-    pub fn print_header<W: Write>(&self, sink: &mut W, row: &str) -> io::Result<()> {
-        writeln!(sink, " {:<6} {:<28}", "ID", "Created on")?;
-
-        writeln!(sink, "{}", row)
-    }
-
-    pub fn print_content<W: Write>(&self, sink: &mut W) -> io::Result<()> {
-        writeln!(
-            sink,
-            " {:<6} {:^28}",
-            self.id,
-            self.created.format(Format::Rfc3339),
-        )
-    }
+pub struct ComfyStruct<T> {
+    pub data: Vec<T>,
 }
 
-impl EntityLong {
-    pub fn print_header<W: Write>(&self, sink: &mut W, row: &str) -> io::Result<()> {
-        writeln!(
-            sink,
-            " {:<4} {:<28} {:<8} {:<8} {:^28}",
-            "ID", "Alias List", "Aliases", "Snippets", "Created on"
-        )?;
+pub trait ComfyTable {
+    fn print_comfy_table(&self);
+}
 
-        writeln!(sink, "{}", row)
-    }
+impl ComfyTable for ComfyStruct<Entity> {
+    fn print_comfy_table(&self) {
+        let mut table = Table::new();
+        table
+            .load_preset(UTF8_FULL)
+            .set_content_arrangement(ContentArrangement::Dynamic)
+            .set_table_width(utils::get_term_width())
+            .set_header(vec![Cell::new("ID"), Cell::new("Created on")]);
 
-    pub fn print_content<W: Write>(&self, sink: &mut W) {
-        let wrapped_data = textwrap::wrap(&self.alias_list, 29);
-        writeln!(
-            sink,
-            " {:<4} {:<29} {:^8} {:^8} {:^28}",
-            self.id,
-            wrapped_data[0],
-            self.alias_count,
-            self.snippet_count,
-            self.created.format(Format::Rfc3339),
-        )
-        .unwrap();
-
-        for i in 1..wrapped_data.len() {
-            writeln!(sink, " {:<4} {:<29}", "", wrapped_data[i]).unwrap();
+        for entity in &self.data {
+            table.add_row(vec![
+                Cell::new(&entity.id),
+                Cell::new(&entity.created.format(Format::Rfc3339)),
+            ]);
         }
+
+        println!("{}", table);
     }
 }
 
-impl EntityLongLong {
-    pub fn print_header<W: Write>(&self, sink: &mut W, row: &str) -> io::Result<()> {
-        writeln!(
-            sink,
-            " {:<4} {:<4} {:<40} {:^28}",
-            "ID", "Type", "Data", "Last modified"
-        )?;
+impl ComfyTable for ComfyStruct<EntityLong> {
+    fn print_comfy_table(&self) {
+        let mut table = Table::new();
+        table
+            .load_preset(UTF8_FULL)
+            .set_content_arrangement(ContentArrangement::Dynamic)
+            .set_table_width(utils::get_term_width())
+            .set_header(vec![
+                Cell::new("ID"),
+                Cell::new("Alias List"),
+                Cell::new("Aliases"),
+                Cell::new("Snippets"),
+                Cell::new("Created on"),
+            ]);
 
-        writeln!(sink, "{}", row)
-    }
-
-    pub fn print_content<W: Write>(&self, sink: &mut W) {
-        let wrapped_data = textwrap::wrap(&self.data, 40);
-        if wrapped_data.len() > 1 {
-            writeln!(
-                sink,
-                " {:<4} {:<4} {:<40} {:^28}",
-                self.id,
-                self.data_type,
-                wrapped_data[0],
-                self.last_modified.format(Format::Rfc3339),
-            )
-            .unwrap();
-
-            for i in 1..wrapped_data.len() {
-                writeln!(
-                    sink,
-                    " {:<4} {:<4} {:<40} {:^28}",
-                    "", "", wrapped_data[i], ""
-                )
-                .unwrap();
-            }
-        } else {
-            writeln!(
-                sink,
-                " {:<4} {:<4} {:<40} {:^28}",
-                self.id,
-                self.data_type,
-                self.data,
-                self.last_modified.format(Format::Rfc3339),
-            )
-            .unwrap();
+        for entity in &self.data {
+            table.add_row(vec![
+                Cell::new(&entity.id),
+                Cell::new(&entity.alias_list),
+                Cell::new(&entity.alias_count),
+                Cell::new(&entity.snippet_count),
+                Cell::new(&entity.created.format(Format::Rfc3339)),
+            ]);
         }
-        writeln!(sink, "{}", "-".repeat(78)).unwrap();
+
+        println!("{}", table);
     }
 }
 
-impl Alias {
-    pub fn print_header<W: Write>(&self, sink: &mut W, row: &str) -> io::Result<()> {
-        writeln!(sink, " {:<44} {:<6} {:^28}", "Names", "ID", "Last modified")?;
+impl ComfyTable for ComfyStruct<EntityLongLong> {
+    fn print_comfy_table(&self) {
+        let mut table = Table::new();
+        table
+            .load_preset(UTF8_FULL)
+            .set_content_arrangement(ContentArrangement::Dynamic)
+            .set_table_width(utils::get_term_width())
+            .set_header(vec![
+                Cell::new("ID"),
+                Cell::new("Type"),
+                Cell::new("Data"),
+                Cell::new("Last modified"),
+            ]);
 
-        writeln!(sink, "{}", row)
-    }
-
-    pub fn print_content<W: Write>(&self, sink: &mut W) -> io::Result<()> {
-        writeln!(
-            sink,
-            " {:<45} {:<6} {:^28}",
-            self.name,
-            self.id,
-            self.updated.format(Format::Rfc3339),
-        )
-    }
-}
-
-impl Snippet {
-    pub fn print_header<W: Write>(&self, sink: &mut W, row: &str) -> io::Result<()> {
-        writeln!(
-            sink,
-            " {:<44} {:<6} {:^28}",
-            "Snippets", "ID", "Last modified"
-        )?;
-
-        writeln!(sink, "{}", row)
-    }
-
-    pub fn print_content<W: Write>(&self, sink: &mut W) {
-        let wrapped_data = textwrap::wrap(&self.data, 45);
-
-        if wrapped_data.len() > 1 {
-            writeln!(
-                sink,
-                " {:<45} {:<6} {:^28}",
-                wrapped_data[0],
-                self.id,
-                self.updated.format(Format::Rfc3339),
-            )
-            .unwrap();
-
-            for i in 1..wrapped_data.len() {
-                writeln!(sink, " {:<45}", wrapped_data[i]).unwrap();
-            }
-        } else {
-            writeln!(
-                sink,
-                " {:<45} {:<6} {:^28}",
-                self.data,
-                self.id,
-                self.updated.format(Format::Rfc3339),
-            )
-            .unwrap();
+        for entity in &self.data {
+            table.add_row(vec![
+                Cell::new(&entity.id),
+                Cell::new(&entity.data_type),
+                Cell::new(&entity.data),
+                Cell::new(&entity.last_modified.format(Format::Rfc3339)),
+            ]);
         }
-        writeln!(sink, "{}", "-".repeat(80)).unwrap();
+
+        println!("{}", table);
     }
 }
 
-impl Relation {
-    pub fn print_header<W: Write>(&self, sink: &mut W, row: &str) -> io::Result<()> {
-        writeln!(
-            sink,
-            " {:<6} {:^12} {:^12} {:^28}",
-            "ID", "Entity ID A", "Entity ID B", "Last modified"
-        )?;
+impl ComfyTable for ComfyStruct<Alias> {
+    fn print_comfy_table(&self) {
+        let mut table = Table::new();
+        table
+            .load_preset(UTF8_FULL)
+            .set_content_arrangement(ContentArrangement::Dynamic)
+            .set_table_width(utils::get_term_width())
+            .set_header(vec![
+                Cell::new("Names"),
+                Cell::new("ID"),
+                Cell::new("Last modified"),
+            ]);
 
-        writeln!(sink, "{}", row)
-    }
-
-    pub fn print_content<W: Write>(&self, sink: &mut W) -> io::Result<()> {
-        writeln!(
-            sink,
-            " {:<6} {:^12} {:^12} {:^28}",
-            self.id,
-            self.entity_id_a,
-            self.entity_id_b,
-            self.updated.format(Format::Rfc3339),
-        )
-    }
-}
-
-impl RelationLong {
-    pub fn print_header<W: Write>(&self, sink: &mut W, row: &str) -> io::Result<()> {
-        writeln!(
-            sink,
-            " {:<3} {:<4} {:^18} {:<4} {:^18} {:^28}",
-            "ID", "ID A", "Alias List A", "ID B", "Alias List B", "Last modified"
-        )?;
-
-        writeln!(sink, "{}", row)
-    }
-
-    pub fn print_content<W: Write>(&self, sink: &mut W) -> io::Result<()> {
-        writeln!(
-            sink,
-            " {:<4} {:<4} {:^18} {:<4} {:^18} {:^28}",
-            self.id,
-            self.entity_id_a,
-            textwrap::wrap(&self.alias_list_a, 18)[0],
-            self.entity_id_b,
-            textwrap::wrap(&self.alias_list_b, 18)[0],
-            self.updated.format(Format::Rfc3339),
-        )
-    }
-}
-
-impl RelationSnippet {
-    pub fn print_header<W: Write>(&self, sink: &mut W, row: &str) -> io::Result<()> {
-        writeln!(
-            sink,
-            " {:<44} {:<6} {:^28}",
-            "Snippets", "ID", "Last modified"
-        )?;
-
-        writeln!(sink, "{}", row)
-    }
-
-    pub fn print_content<W: Write>(&self, sink: &mut W) {
-        let wrapped_data = textwrap::wrap(&self.data, 45);
-
-        if wrapped_data.len() > 1 {
-            writeln!(
-                sink,
-                " {:<45} {:<6} {:^28}",
-                wrapped_data[0],
-                self.id,
-                self.updated.format(Format::Rfc3339),
-            )
-            .unwrap();
-
-            for i in 1..wrapped_data.len() {
-                writeln!(sink, " {:<45}", wrapped_data[i]).unwrap();
-            }
-        } else {
-            writeln!(
-                sink,
-                " {:<45} {:<6} {:^28}",
-                self.data,
-                self.id,
-                self.updated.format(Format::Rfc3339),
-            )
-            .unwrap();
+        for entity in &self.data {
+            table.add_row(vec![
+                Cell::new(&entity.name),
+                Cell::new(&entity.id),
+                Cell::new(&entity.updated.format(Format::Rfc3339)),
+            ]);
         }
-        writeln!(sink, "{}", "-".repeat(80)).unwrap();
+
+        println!("{}", table);
     }
 }
 
-impl EntityFound {
-    pub fn print_header<W: Write>(&self, sink: &mut W, row: &str) -> io::Result<()> {
-        writeln!(
-            sink,
-            " {:<20} {:<6} {:^10} {:^28}",
-            "Name", "ID", "Entity ID", "Updated"
-        )?;
+impl ComfyTable for ComfyStruct<Snippet> {
+    fn print_comfy_table(&self) {
+        let mut table = Table::new();
+        table
+            .load_preset(UTF8_FULL)
+            .set_content_arrangement(ContentArrangement::Dynamic)
+            .set_table_width(utils::get_term_width())
+            .set_header(vec![
+                Cell::new("Snippets"),
+                Cell::new("ID"),
+                Cell::new("Last modified"),
+            ]);
 
-        writeln!(sink, "{}", row)
-    }
-
-    pub fn print_content<W: Write>(&self, sink: &mut W) -> io::Result<()> {
-        writeln!(
-            sink,
-            " {:<20} {:<6} {:^10} {:^28}",
-            self.name,
-            self.id,
-            self.entity_id,
-            self.updated.format(Format::Rfc3339),
-        )
-    }
-}
-
-impl EntityFoundLong {
-    pub fn print_header<W: Write>(&self, sink: &mut W, row: &str) -> io::Result<()> {
-        writeln!(
-            sink,
-            " {:<10} {:<6} {:^10} {:^22} {:^28}",
-            "Name", "ID", "Entity ID", "Other Alias", "Updated"
-        )?;
-
-        writeln!(sink, "{}", row)
-    }
-
-    pub fn print_content<W: Write>(&self, sink: &mut W) -> io::Result<()> {
-        writeln!(
-            sink,
-            " {:<10} {:<6} {:^10} {:^22} {:^28}",
-            self.name,
-            self.id,
-            self.entity_id,
-            self.other_alias,
-            self.updated.format(Format::Rfc3339),
-        )
-    }
-}
-
-impl SnippetFound {
-    pub fn print_header<W: Write>(&self, sink: &mut W, row: &str) -> io::Result<()> {
-        writeln!(
-            sink,
-            " {:<36} {:<3} {:^10} {:^28}",
-            "Snippets", "ID", "Entity ID", "Last modified"
-        )?;
-
-        writeln!(sink, "{}", row)
-    }
-
-    pub fn print_content<W: Write>(&self, sink: &mut W) {
-        let wrapped_data = textwrap::wrap(&self.data, 37);
-
-        if wrapped_data.len() > 1 {
-            writeln!(
-                sink,
-                " {:<36} {:<4} {:^10} {:^28}",
-                wrapped_data[0],
-                self.id,
-                self.entity_id,
-                self.updated.format(Format::Rfc3339),
-            )
-            .unwrap();
-
-            for i in 1..wrapped_data.len() {
-                writeln!(sink, " {:<36}", wrapped_data[i]).unwrap();
-            }
-        } else {
-            writeln!(
-                sink,
-                " {:<36} {:<4} {:^10} {:^28}",
-                self.data,
-                self.id,
-                self.entity_id,
-                self.updated.format(Format::Rfc3339),
-            )
-            .unwrap();
+        for snippet in &self.data {
+            table.add_row(vec![
+                Cell::new(&snippet.data),
+                Cell::new(&snippet.id),
+                Cell::new(&snippet.updated.format(Format::Rfc3339)),
+            ]);
         }
-        writeln!(sink, "{}", "-".repeat(80)).unwrap();
+
+        println!("{}", table);
     }
 }
 
-impl RelationSnippetFound {
-    pub fn print_header<W: Write>(&self, sink: &mut W, row: &str) -> io::Result<()> {
-        writeln!(
-            sink,
-            " {:<34} {:<3} {:^12} {:^28}",
-            "Snippets", "ID", "Relation ID", "Last modified"
-        )?;
+impl ComfyTable for ComfyStruct<Relation> {
+    fn print_comfy_table(&self) {
+        let mut table = Table::new();
+        table
+            .load_preset(UTF8_FULL)
+            .set_content_arrangement(ContentArrangement::Dynamic)
+            .set_table_width(utils::get_term_width())
+            .set_header(vec![
+                Cell::new("ID"),
+                Cell::new("Entity ID A"),
+                Cell::new("Entity ID B"),
+                Cell::new("Last modified"),
+            ]);
 
-        writeln!(sink, "{}", row)
-    }
-
-    pub fn print_content<W: Write>(&self, sink: &mut W) {
-        let wrapped_data = textwrap::wrap(&self.data, 35);
-
-        if wrapped_data.len() > 1 {
-            writeln!(
-                sink,
-                " {:<34} {:<4} {:^12} {:^28}",
-                wrapped_data[0],
-                self.id,
-                self.relation_id,
-                self.updated.format(Format::Rfc3339),
-            )
-            .unwrap();
-
-            for i in 1..wrapped_data.len() {
-                writeln!(sink, " {:<34}", wrapped_data[i]).unwrap();
-            }
-        } else {
-            writeln!(
-                sink,
-                " {:<34} {:<4} {:^12} {:^28}",
-                self.data,
-                self.id,
-                self.relation_id,
-                self.updated.format(Format::Rfc3339),
-            )
-            .unwrap();
+        for entity in &self.data {
+            table.add_row(vec![
+                Cell::new(&entity.id),
+                Cell::new(&entity.entity_id_a),
+                Cell::new(&entity.entity_id_b),
+                Cell::new(&entity.updated.format(Format::Rfc3339)),
+            ]);
         }
-        writeln!(sink, "{}", "-".repeat(80)).unwrap();
+
+        println!("{}", table);
     }
 }
 
-impl Stats {
-    pub fn print_header<W: Write>(&self, sink: &mut W, row: &str) -> io::Result<()> {
-        writeln!(sink, " {:<20} {:<10}", "Type", "Count")?;
+impl ComfyTable for ComfyStruct<RelationLong> {
+    fn print_comfy_table(&self) {
+        let mut table = Table::new();
+        table
+            .load_preset(UTF8_FULL)
+            .set_content_arrangement(ContentArrangement::Dynamic)
+            .set_table_width(utils::get_term_width())
+            .set_header(vec![
+                Cell::new("ID"),
+                Cell::new("ID A"),
+                Cell::new("Alias List A"),
+                Cell::new("ID B"),
+                Cell::new("Alias List B"),
+                Cell::new("Last modified"),
+            ]);
 
-        writeln!(sink, "{}", row)
+        for entity in &self.data {
+            table.add_row(vec![
+                Cell::new(&entity.id),
+                Cell::new(&entity.entity_id_a),
+                Cell::new(&entity.alias_list_a),
+                Cell::new(&entity.entity_id_b),
+                Cell::new(&entity.alias_list_b),
+                Cell::new(&entity.updated.format(Format::Rfc3339)),
+            ]);
+        }
+
+        println!("{}", table);
     }
+}
 
-    pub fn print_content<W: Write>(&self, sink: &mut W) -> io::Result<()> {
-        writeln!(sink, " {:<20} {:<10}", self.stat_type, self.count,)
+impl ComfyTable for ComfyStruct<RelationSnippet> {
+    fn print_comfy_table(&self) {
+        let mut table = Table::new();
+        table
+            .load_preset(UTF8_FULL)
+            .set_content_arrangement(ContentArrangement::Dynamic)
+            .set_table_width(utils::get_term_width())
+            .set_header(vec![
+                Cell::new("Snippets"),
+                Cell::new("ID"),
+                Cell::new("Last modified"),
+            ]);
+
+        for entity in &self.data {
+            table.add_row(vec![
+                Cell::new(&entity.data),
+                Cell::new(&entity.id),
+                Cell::new(&entity.updated.format(Format::Rfc3339)),
+            ]);
+        }
+
+        println!("{}", table);
+    }
+}
+
+impl ComfyTable for ComfyStruct<EntityFound> {
+    fn print_comfy_table(&self) {
+        let mut table = Table::new();
+        table
+            .load_preset(UTF8_FULL)
+            .set_content_arrangement(ContentArrangement::Dynamic)
+            .set_table_width(utils::get_term_width())
+            .set_header(vec![
+                Cell::new("Name"),
+                Cell::new("ID"),
+                Cell::new("Entity ID"),
+                Cell::new("Updated"),
+            ]);
+
+        for entity in &self.data {
+            table.add_row(vec![
+                Cell::new(&entity.name),
+                Cell::new(&entity.id),
+                Cell::new(&entity.entity_id),
+                Cell::new(&entity.updated.format(Format::Rfc3339)),
+            ]);
+        }
+
+        println!("{}", table);
+    }
+}
+
+impl ComfyTable for ComfyStruct<EntityFoundLong> {
+    fn print_comfy_table(&self) {
+        let mut table = Table::new();
+        table
+            .load_preset(UTF8_FULL)
+            .set_content_arrangement(ContentArrangement::Dynamic)
+            .set_table_width(utils::get_term_width())
+            .set_header(vec![
+                Cell::new("Name"),
+                Cell::new("ID"),
+                Cell::new("Entity ID"),
+                Cell::new("Other Aliases"),
+                Cell::new("Updated"),
+            ]);
+
+        for entity in &self.data {
+            table.add_row(vec![
+                Cell::new(&entity.name),
+                Cell::new(&entity.id),
+                Cell::new(&entity.entity_id),
+                Cell::new(&entity.other_alias),
+                Cell::new(&entity.updated.format(Format::Rfc3339)),
+            ]);
+        }
+
+        println!("{}", table);
+    }
+}
+
+impl ComfyTable for ComfyStruct<SnippetFound> {
+    fn print_comfy_table(&self) {
+        let mut table = Table::new();
+        table
+            .load_preset(UTF8_FULL)
+            .set_content_arrangement(ContentArrangement::Dynamic)
+            .set_table_width(utils::get_term_width())
+            .set_header(vec![
+                Cell::new("Snippets"),
+                Cell::new("ID"),
+                Cell::new("Entity ID"),
+                Cell::new("Last modified"),
+            ]);
+
+        for entity in &self.data {
+            table.add_row(vec![
+                Cell::new(&entity.data),
+                Cell::new(&entity.id),
+                Cell::new(&entity.entity_id),
+                Cell::new(&entity.updated.format(Format::Rfc3339)),
+            ]);
+        }
+
+        println!("{}", table);
+    }
+}
+
+impl ComfyTable for ComfyStruct<RelationSnippetFound> {
+    fn print_comfy_table(&self) {
+        let mut table = Table::new();
+        table
+            .load_preset(UTF8_FULL)
+            .set_content_arrangement(ContentArrangement::Dynamic)
+            .set_table_width(utils::get_term_width())
+            .set_header(vec![
+                Cell::new("Snippets"),
+                Cell::new("ID"),
+                Cell::new("Relation ID"),
+                Cell::new("Last modified"),
+            ]);
+
+        for entity in &self.data {
+            table.add_row(vec![
+                Cell::new(&entity.data),
+                Cell::new(&entity.id),
+                Cell::new(&entity.relation_id),
+                Cell::new(&entity.updated.format(Format::Rfc3339)),
+            ]);
+        }
+
+        println!("{}", table);
+    }
+}
+
+impl ComfyTable for ComfyStruct<Stats> {
+    fn print_comfy_table(&self) {
+        let mut table = Table::new();
+        table
+            .load_preset(UTF8_FULL)
+            .set_content_arrangement(ContentArrangement::Dynamic)
+            .set_table_width(utils::get_term_width())
+            .set_header(vec![Cell::new("Type"), Cell::new("Count")]);
+
+        for entity in &self.data {
+            table.add_row(vec![Cell::new(&entity.stat_type), Cell::new(&entity.count)]);
+        }
+
+        println!("{}", table);
     }
 }
