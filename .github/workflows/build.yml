@@ -196,7 +196,7 @@ jobs:
       - name: Retrieve stashed release URL
         uses: actions/download-artifact@v1
         with:
-          name: release_url
+          name: release-url
 
       - name: Read release URL
         id: get_release_url
