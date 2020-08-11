@@ -43,6 +43,8 @@ fn main() {
         process::exit(1);
     });
 
+    let term_width = utils::get_term_width();
+
     // Then check every other subcommands
     #[cfg(target_family = "unix")]
     match matches.subcommand() {
@@ -72,7 +74,7 @@ fn main() {
 
         #[cfg(target_family = "unix")]
         ("skim", Some(skim_matches)) => {
-            skim::skim(skim_matches);
+            skim::skim(skim_matches, term_width, conn);
         }
 
         // The program actually never reaches here because of yaml settings
