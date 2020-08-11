@@ -104,6 +104,7 @@ jobs:
     steps:
       - name: Get VERSION
         id: get_version
+        shell: bash
         run: |
           echo "::set-output name=VERSION::${GITHUB_REF#refs/tags/}"
 
@@ -142,9 +143,11 @@ jobs:
           path: target/${{ matrix.target }}/release/${{ env.CRATE_NAME }}${{ matrix.suffix }}
 
       - name: Renaming file before uploading
+        env:
+          VERSION: ${{ steps.get_version.outputs.VERSION }}
         shell: bash
         run: |
-          cp target/${{ matrix.target }}/release/${{ env.CRATE_NAME }}${{ matrix.suffix }} ${{ env.CRATE_NAME }}-${{ steps.get_version.outputs.VERSION }}-${{ matrix.target }}${{ matrix.suffix }}
+          cp target/${{ matrix.target }}/release/${{ env.CRATE_NAME }}${{ matrix.suffix }} ${{ env.CRATE_NAME }}-$VERSION-${{ matrix.target }}${{ matrix.suffix }}
 
       - uses: softprops/action-gh-release@v1
         with:
