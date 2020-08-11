@@ -24,6 +24,8 @@ atty = "0.2"
 textwrap = "0.12"
 scrawl = "1.1"
 regex = "1"
+comfy-table = "1.0.0"
+term_size = "1.0.0-beta1"
 
 [target.'cfg(unix)'.dependencies]
 skim = "0.8"
