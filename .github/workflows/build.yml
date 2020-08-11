@@ -94,7 +94,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/create-release@v1.0.0
+    - name: Create release
+      id: create_release
+      uses: actions/create-release@v1.0.0
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
@@ -212,3 +214,15 @@ jobs:
           asset_path: ${{ steps.prepare_artifact.outputs.ARTIFACT_PATH }}
           asset_name: ${{ steps.prepare_artifact.outputs.ARTIFACT_NAME }}
           asset_content_type: application/x-7z-compressed
+
+  # When all release artifact is pushed, delete the release URL artifact
+  delete_release_url:
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: release
+    name: Delete release URL
+    runs-on: ubuntu-latest
+    steps:
+      - uses: geekyeggo/delete-artifact@v1
+        with:
+          release-url
+
