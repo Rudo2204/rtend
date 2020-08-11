@@ -167,8 +167,8 @@ jobs:
           CRATE_NAME: ${{ steps.set_crate_name.outputs.CRATE_NAME }}
           VERSION: ${{ steps.get_version.outputs.VERSION }}
         run: |
-          echo ::set-output name=ARTIFACT_PATH::./$CRATE_NAME-$VERSION-${{ matrix.target }}.7z
-          echo ::set-output name=ARTIFACT_NAME::$CRATE_NAME-$VERSION-${{ matrix.target }}.7z
+          echo ::set-output name=ARTIFACT_PATH::./$CRATE_NAME-$VERSION-${{ matrix.target }}.zip
+          echo ::set-output name=ARTIFACT_NAME::$CRATE_NAME-$VERSION-${{ matrix.target }}.zip
 
       - uses: actions/create-release@v1
         id: create_release
