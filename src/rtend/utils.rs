@@ -2,6 +2,7 @@ use directories::BaseDirs;
 use rusqlite;
 use rusqlite::{Connection, NO_PARAMS};
 use std::{
+    convert::TryInto,
     fs,
     io::{self, Write},
     path, process,
@@ -31,6 +32,15 @@ pub fn get_yn_input() -> Result<bool, ()> {
         process::exit(1);
     }
     Ok(answer)
+}
+
+pub fn get_term_width() -> u16 {
+    if let Some((w, _)) = term_size::dimensions() {
+        w.try_into().unwrap()
+    } else {
+        eprintln!("Unable to get terminal size!");
+        process::exit(1);
+    }
 }
 
 pub fn check_database_exists(name: &str) -> bool {
