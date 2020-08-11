@@ -83,7 +83,7 @@ fn find_alias(conn: Connection, name: &str, verbose: bool) -> rusqlite::Result<(
                 id: row.get(0)?,
                 name: row.get(1)?,
                 entity_id: row.get(2)?,
-                other_alias: row.get(3).unwrap_or("".to_string()),
+                other_alias: row.get(3).unwrap_or_else(|_| "".to_string()),
                 updated: row.get(4)?,
             })
         })?;

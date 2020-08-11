@@ -1,3 +1,4 @@
+#![allow(clippy::redundant_closure)]
 #![cfg(target_family = "unix")]
 use clap::ArgMatches;
 use comfy_table::TableComponent::*;
@@ -124,7 +125,7 @@ pub fn skim(args: &ArgMatches, term_width: u16, conn: rusqlite::Connection) {
         .unwrap_or_else(|| Vec::new());
 
     let entry_selected: String;
-    let item = selected_items.iter().nth(0);
+    let item = selected_items.get(0);
     match item {
         None => {
             process::exit(1);

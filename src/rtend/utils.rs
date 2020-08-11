@@ -22,10 +22,10 @@ pub fn get_yn_input() -> Result<bool, ()> {
             Err(e) => eprintln!("Could not read stdin, error: {}", e),
         }
         input = input.trim().to_string();
-        if yes.iter().any(|n| &n[..] == input) {
+        if yes.iter().any(|n| n[..] == input) {
             answer = true;
             break;
-        } else if no.iter().any(|n| &n[..] == input) {
+        } else if no.iter().any(|n| n[..] == input) {
             answer = false;
             break;
         }
