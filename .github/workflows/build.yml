@@ -105,8 +105,7 @@ jobs:
       - name: Get VERSION
         id: get_version
         run: |
-          echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
-          echo set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
+          echo "::set-output name=VERSION::${GITHUB_REF#refs/tags/}"
 
       - uses: actions/checkout@v2
 
