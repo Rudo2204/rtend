@@ -1,4 +1,4 @@
-use directories::BaseDirs;
+use directories::ProjectDirs;
 use rusqlite;
 use rusqlite::{Connection, NO_PARAMS};
 use std::{
@@ -7,6 +7,8 @@ use std::{
     io::{self, Write},
     path, process,
 };
+
+const PROGRAM_NAME: &str = "rtend";
 
 pub fn get_yn_input() -> Result<bool, ()> {
     let answer;
@@ -64,8 +66,8 @@ pub fn check_first_time() -> bool {
 }
 
 pub fn find_data_dir() -> Result<path::PathBuf, &'static str> {
-    if let Some(base_dir) = BaseDirs::new() {
-        Ok(base_dir.data_dir().join("rtend"))
+    if let Some(base_dir) = ProjectDirs::from("", "", PROGRAM_NAME) {
+        Ok(base_dir.data_dir().to_path_buf())
     } else {
         Err("Could not retrieve home directory. You maybe are using unsupported OS.")
     }
