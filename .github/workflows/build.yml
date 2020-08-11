@@ -87,9 +87,35 @@ jobs:
           command: check
           args: --bin ${{ steps.set_crate_name.outputs.CRATE_NAME }} --locked
 
-  release:
+  create_release:
     if: startsWith(github.ref, 'refs/tags/v')
     needs: check
+    name: Create release
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/create-release@v1.0.0
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ github.ref }}
+        release_name: Release ${{ github.ref }}
+        draft: true
+        prerelease: false
+    # since jobs can not share any variables we have to copy the URL of the created Github release
+    # into a file and stash it as an artifact
+    - name: Copy release URL into file
+      run: |
+        mkdir release
+        printf "%s" "${{ steps.create_release.outputs.upload_url }}" > release/url.txt
+    - uses: actions/upload-artifact@v1
+      with:
+        name: release-url
+        path: ./release
+
+  release:
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: create_release # this means check AND create_release succeeded
     name: Release
     runs-on: ${{ matrix.os }}
 
@@ -167,21 +193,22 @@ jobs:
           echo ::set-output name=ARTIFACT_PATH::./${{ steps.set_crate_name.outputs.CRATE_NAME }}-${{ steps.get_version.outputs.VERSION}}-${{ matrix.target }}.zip
           echo ::set-output name=ARTIFACT_NAME::${{ steps.set_crate_name.outputs.CRATE_NAME }}-${{ steps.get_version.outputs.VERSION}}-${{ matrix.target }}.zip
 
-      - uses: actions/create-release@v1
-        id: create_release
-        env:
-            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Retrieve stashed release URL
+        uses: actions/download-artifact@v1
         with:
-            tag_name: ${{ github.ref }}
-            release_name: Release ${{ github.ref }}
-            draft: true
-            prerelease: false
+          name: release_url
+
+      - name: Read release URL
+        id: get_release_url
+        uses: juliangruber/read-file-action@v1.0.0
+        with:
+          path: release-url/url.txt
 
       - uses: actions/upload-release-asset@v1.0.2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          upload_url: ${{ steps.get_release_url.outputs.content }}
           asset_path: ${{ steps.prepare_artifact.outputs.ARTIFACT_PATH }}
           asset_name: ${{ steps.prepare_artifact.outputs.ARTIFACT_NAME }}
           asset_content_type: application/x-7z-compressed
