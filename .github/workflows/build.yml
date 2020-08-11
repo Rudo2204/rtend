@@ -156,11 +156,8 @@ jobs:
           strip: true
 
       - uses: edgarrc/action-7z@v1.0.4
-        env:
-          CRATE_NAME: ${{ steps.set_crate_name.outputs.CRATE_NAME }}
-          VERSION: ${{ steps.get_version.outputs.VERSION }}
         with:
-          args: 7z a -t7z $CRATE_NAME-$VERSION-${{ matrix.target}}.7z ${{ matrix.bin }}
+          args: 7z a -t7z ${{ steps.set_crate_name.outputs.CRATE_NAME }}-${{ steps.get_version.outputs.VERSION }}-${{ matrix.target}}.7z ${{ matrix.bin }}
 
       - name: Prepare artifact
         id: prepare_artifact
