@@ -224,5 +224,4 @@ jobs:
     steps:
       - uses: geekyeggo/delete-artifact@v1
         with:
-          release-url
-
+          name: release-url
