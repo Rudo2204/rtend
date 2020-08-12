@@ -101,12 +101,6 @@ jobs:
             target: x86_64-apple-darwin
 
     steps:
-      - name: Get VERSION
-        id: get_version
-        shell: bash
-        run: |
-          echo "::set-output name=VERSION::${GITHUB_REF#refs/tags/}"
-
       - uses: actions/checkout@v2
 
       - uses: actions/cache@v2
@@ -141,7 +135,15 @@ jobs:
           name: ${{ env.CRATE_NAME }}-${{ matrix.target }}${{ matrix.suffix }}
           path: target/${{ matrix.target }}/release/${{ env.CRATE_NAME }}${{ matrix.suffix }}
 
+      - name: Get VERSION
+        if: startsWith(github.ref, 'refs/tags/v')
+        id: get_version
+        shell: bash
+        run: |
+          echo "::set-output name=VERSION::${GITHUB_REF#refs/tags/}"
+
       - name: Renaming file before uploading
+        if: startsWith(github.ref, 'refs/tags/v')
         env:
           VERSION: ${{ steps.get_version.outputs.VERSION }}
         shell: bash
