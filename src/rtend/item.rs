@@ -102,7 +102,7 @@ pub trait ComfyTable {
 
 impl ComfyTable for ComfyStruct<Entity> {
     fn print_comfy_table(&self) {
-        if self.data.len() == 0 {
+        if self.data.is_empty() {
             println!("Found nothing.");
         } else {
             let mut table = Table::new();
@@ -127,7 +127,7 @@ impl ComfyTable for ComfyStruct<Entity> {
 impl ComfyTable for ComfyStruct<EntityLong> {
     fn print_comfy_table(&self) {
         let mut table = Table::new();
-        if self.data.len() == 0 {
+        if self.data.is_empty() {
             println!("Found nothing.");
         } else {
             table
@@ -159,7 +159,7 @@ impl ComfyTable for ComfyStruct<EntityLong> {
 
 impl ComfyTable for ComfyStruct<EntityLongLong> {
     fn print_comfy_table(&self) {
-        if self.data.len() == 0 {
+        if self.data.is_empty() {
             println!("Found nothing.");
         } else {
             let mut table = Table::new();
@@ -190,7 +190,7 @@ impl ComfyTable for ComfyStruct<EntityLongLong> {
 
 impl ComfyTable for ComfyStruct<Alias> {
     fn print_comfy_table(&self) {
-        if self.data.len() == 0 {
+        if self.data.is_empty() {
             println!("Found nothing.");
         } else {
             let mut table = Table::new();
@@ -219,7 +219,7 @@ impl ComfyTable for ComfyStruct<Alias> {
 
 impl ComfyTable for ComfyStruct<Snippet> {
     fn print_comfy_table(&self) {
-        if self.data.len() == 0 {
+        if self.data.is_empty() {
             println!("Found nothing.");
         } else {
             let mut table = Table::new();
@@ -248,7 +248,7 @@ impl ComfyTable for ComfyStruct<Snippet> {
 
 impl ComfyTable for ComfyStruct<Relation> {
     fn print_comfy_table(&self) {
-        if self.data.len() == 0 {
+        if self.data.is_empty() {
             println!("Found nothing.");
         } else {
             let mut table = Table::new();
@@ -279,7 +279,7 @@ impl ComfyTable for ComfyStruct<Relation> {
 
 impl ComfyTable for ComfyStruct<RelationLong> {
     fn print_comfy_table(&self) {
-        if self.data.len() == 0 {
+        if self.data.is_empty() {
             println!("Found nothing.");
         } else {
             let mut table = Table::new();
@@ -314,7 +314,7 @@ impl ComfyTable for ComfyStruct<RelationLong> {
 
 impl ComfyTable for ComfyStruct<RelationSnippet> {
     fn print_comfy_table(&self) {
-        if self.data.len() == 0 {
+        if self.data.is_empty() {
             println!("Found nothing.");
         } else {
             let mut table = Table::new();
@@ -343,7 +343,7 @@ impl ComfyTable for ComfyStruct<RelationSnippet> {
 
 impl ComfyTable for ComfyStruct<EntityFound> {
     fn print_comfy_table(&self) {
-        if self.data.len() == 0 {
+        if self.data.is_empty() {
             println!("Found nothing.");
         } else {
             let mut table = Table::new();
@@ -374,7 +374,7 @@ impl ComfyTable for ComfyStruct<EntityFound> {
 
 impl ComfyTable for ComfyStruct<EntityFoundLong> {
     fn print_comfy_table(&self) {
-        if self.data.len() == 0 {
+        if self.data.is_empty() {
             println!("Found nothing.");
         } else {
             let mut table = Table::new();
@@ -407,7 +407,7 @@ impl ComfyTable for ComfyStruct<EntityFoundLong> {
 
 impl ComfyTable for ComfyStruct<SnippetFound> {
     fn print_comfy_table(&self) {
-        if self.data.len() == 0 {
+        if self.data.is_empty() {
             println!("Found nothing.");
         } else {
             let mut table = Table::new();
@@ -438,7 +438,7 @@ impl ComfyTable for ComfyStruct<SnippetFound> {
 
 impl ComfyTable for ComfyStruct<RelationSnippetFound> {
     fn print_comfy_table(&self) {
-        if self.data.len() == 0 {
+        if self.data.is_empty() {
             println!("Found nothing.");
         } else {
             let mut table = Table::new();
@@ -469,7 +469,7 @@ impl ComfyTable for ComfyStruct<RelationSnippetFound> {
 
 impl ComfyTable for ComfyStruct<Stats> {
     fn print_comfy_table(&self) {
-        if self.data.len() == 0 {
+        if self.data.is_empty() {
             println!("Found nothing.");
         } else {
             let mut table = Table::new();
