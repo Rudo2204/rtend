@@ -102,336 +102,388 @@ pub trait ComfyTable {
 
 impl ComfyTable for ComfyStruct<Entity> {
     fn print_comfy_table(&self) {
-        let mut table = Table::new();
-        table
-            .load_preset(UTF8_FULL)
-            .set_content_arrangement(ContentArrangement::Dynamic)
-            .set_table_width(utils::get_term_width())
-            .set_header(vec![Cell::new("ID"), Cell::new("Created on")]);
+        if self.data.len() == 0 {
+            println!("Found nothing.");
+        } else {
+            let mut table = Table::new();
+            table
+                .load_preset(UTF8_FULL)
+                .set_content_arrangement(ContentArrangement::Dynamic)
+                .set_table_width(utils::get_term_width())
+                .set_header(vec![Cell::new("ID"), Cell::new("Created on")]);
 
-        for entity in &self.data {
-            table.add_row(vec![
-                Cell::new(&entity.id),
-                Cell::new(&entity.created.format(Format::Rfc3339)),
-            ]);
+            for entity in &self.data {
+                table.add_row(vec![
+                    Cell::new(&entity.id),
+                    Cell::new(&entity.created.format(Format::Rfc3339)),
+                ]);
+            }
+
+            println!("{}", table);
         }
-
-        println!("{}", table);
     }
 }
 
 impl ComfyTable for ComfyStruct<EntityLong> {
     fn print_comfy_table(&self) {
         let mut table = Table::new();
-        table
-            .load_preset(UTF8_FULL)
-            .set_content_arrangement(ContentArrangement::Dynamic)
-            .set_table_width(utils::get_term_width())
-            .set_header(vec![
-                Cell::new("ID"),
-                Cell::new("Alias List"),
-                Cell::new("Aliases"),
-                Cell::new("Snippets"),
-                Cell::new("Created on"),
-            ]);
+        if self.data.len() == 0 {
+            println!("Found nothing.");
+        } else {
+            table
+                .load_preset(UTF8_FULL)
+                .set_content_arrangement(ContentArrangement::Dynamic)
+                .set_table_width(utils::get_term_width())
+                .set_header(vec![
+                    Cell::new("ID"),
+                    Cell::new("Alias List"),
+                    Cell::new("Aliases"),
+                    Cell::new("Snippets"),
+                    Cell::new("Created on"),
+                ]);
 
-        for entity in &self.data {
-            table.add_row(vec![
-                Cell::new(&entity.id),
-                Cell::new(&entity.alias_list),
-                Cell::new(&entity.alias_count),
-                Cell::new(&entity.snippet_count),
-                Cell::new(&entity.created.format(Format::Rfc3339)),
-            ]);
+            for entity in &self.data {
+                table.add_row(vec![
+                    Cell::new(&entity.id),
+                    Cell::new(&entity.alias_list),
+                    Cell::new(&entity.alias_count),
+                    Cell::new(&entity.snippet_count),
+                    Cell::new(&entity.created.format(Format::Rfc3339)),
+                ]);
+            }
+
+            println!("{}", table);
         }
-
-        println!("{}", table);
     }
 }
 
 impl ComfyTable for ComfyStruct<EntityLongLong> {
     fn print_comfy_table(&self) {
-        let mut table = Table::new();
-        table
-            .load_preset(UTF8_FULL)
-            .set_content_arrangement(ContentArrangement::Dynamic)
-            .set_table_width(utils::get_term_width())
-            .set_header(vec![
-                Cell::new("ID"),
-                Cell::new("Type"),
-                Cell::new("Data"),
-                Cell::new("Last modified"),
-            ]);
+        if self.data.len() == 0 {
+            println!("Found nothing.");
+        } else {
+            let mut table = Table::new();
+            table
+                .load_preset(UTF8_FULL)
+                .set_content_arrangement(ContentArrangement::Dynamic)
+                .set_table_width(utils::get_term_width())
+                .set_header(vec![
+                    Cell::new("ID"),
+                    Cell::new("Type"),
+                    Cell::new("Data"),
+                    Cell::new("Last modified"),
+                ]);
 
-        for entity in &self.data {
-            table.add_row(vec![
-                Cell::new(&entity.id),
-                Cell::new(&entity.data_type),
-                Cell::new(&entity.data),
-                Cell::new(&entity.last_modified.format(Format::Rfc3339)),
-            ]);
+            for entity in &self.data {
+                table.add_row(vec![
+                    Cell::new(&entity.id),
+                    Cell::new(&entity.data_type),
+                    Cell::new(&entity.data),
+                    Cell::new(&entity.last_modified.format(Format::Rfc3339)),
+                ]);
+            }
+
+            println!("{}", table);
         }
-
-        println!("{}", table);
     }
 }
 
 impl ComfyTable for ComfyStruct<Alias> {
     fn print_comfy_table(&self) {
-        let mut table = Table::new();
-        table
-            .load_preset(UTF8_FULL)
-            .set_content_arrangement(ContentArrangement::Dynamic)
-            .set_table_width(utils::get_term_width())
-            .set_header(vec![
-                Cell::new("Names"),
-                Cell::new("ID"),
-                Cell::new("Last modified"),
-            ]);
+        if self.data.len() == 0 {
+            println!("Found nothing.");
+        } else {
+            let mut table = Table::new();
+            table
+                .load_preset(UTF8_FULL)
+                .set_content_arrangement(ContentArrangement::Dynamic)
+                .set_table_width(utils::get_term_width())
+                .set_header(vec![
+                    Cell::new("Names"),
+                    Cell::new("ID"),
+                    Cell::new("Last modified"),
+                ]);
 
-        for entity in &self.data {
-            table.add_row(vec![
-                Cell::new(&entity.name),
-                Cell::new(&entity.id),
-                Cell::new(&entity.updated.format(Format::Rfc3339)),
-            ]);
+            for entity in &self.data {
+                table.add_row(vec![
+                    Cell::new(&entity.name),
+                    Cell::new(&entity.id),
+                    Cell::new(&entity.updated.format(Format::Rfc3339)),
+                ]);
+            }
+
+            println!("{}", table);
         }
-
-        println!("{}", table);
     }
 }
 
 impl ComfyTable for ComfyStruct<Snippet> {
     fn print_comfy_table(&self) {
-        let mut table = Table::new();
-        table
-            .load_preset(UTF8_FULL)
-            .set_content_arrangement(ContentArrangement::Dynamic)
-            .set_table_width(utils::get_term_width())
-            .set_header(vec![
-                Cell::new("Snippets"),
-                Cell::new("ID"),
-                Cell::new("Last modified"),
-            ]);
+        if self.data.len() == 0 {
+            println!("Found nothing.");
+        } else {
+            let mut table = Table::new();
+            table
+                .load_preset(UTF8_FULL)
+                .set_content_arrangement(ContentArrangement::Dynamic)
+                .set_table_width(utils::get_term_width())
+                .set_header(vec![
+                    Cell::new("Snippets"),
+                    Cell::new("ID"),
+                    Cell::new("Last modified"),
+                ]);
 
-        for snippet in &self.data {
-            table.add_row(vec![
-                Cell::new(&snippet.data),
-                Cell::new(&snippet.id),
-                Cell::new(&snippet.updated.format(Format::Rfc3339)),
-            ]);
+            for snippet in &self.data {
+                table.add_row(vec![
+                    Cell::new(&snippet.data),
+                    Cell::new(&snippet.id),
+                    Cell::new(&snippet.updated.format(Format::Rfc3339)),
+                ]);
+            }
+
+            println!("{}", table);
         }
-
-        println!("{}", table);
     }
 }
 
 impl ComfyTable for ComfyStruct<Relation> {
     fn print_comfy_table(&self) {
-        let mut table = Table::new();
-        table
-            .load_preset(UTF8_FULL)
-            .set_content_arrangement(ContentArrangement::Dynamic)
-            .set_table_width(utils::get_term_width())
-            .set_header(vec![
-                Cell::new("ID"),
-                Cell::new("Entity ID A"),
-                Cell::new("Entity ID B"),
-                Cell::new("Last modified"),
-            ]);
+        if self.data.len() == 0 {
+            println!("Found nothing.");
+        } else {
+            let mut table = Table::new();
+            table
+                .load_preset(UTF8_FULL)
+                .set_content_arrangement(ContentArrangement::Dynamic)
+                .set_table_width(utils::get_term_width())
+                .set_header(vec![
+                    Cell::new("ID"),
+                    Cell::new("Entity ID A"),
+                    Cell::new("Entity ID B"),
+                    Cell::new("Last modified"),
+                ]);
 
-        for entity in &self.data {
-            table.add_row(vec![
-                Cell::new(&entity.id),
-                Cell::new(&entity.entity_id_a),
-                Cell::new(&entity.entity_id_b),
-                Cell::new(&entity.updated.format(Format::Rfc3339)),
-            ]);
+            for entity in &self.data {
+                table.add_row(vec![
+                    Cell::new(&entity.id),
+                    Cell::new(&entity.entity_id_a),
+                    Cell::new(&entity.entity_id_b),
+                    Cell::new(&entity.updated.format(Format::Rfc3339)),
+                ]);
+            }
+
+            println!("{}", table);
         }
-
-        println!("{}", table);
     }
 }
 
 impl ComfyTable for ComfyStruct<RelationLong> {
     fn print_comfy_table(&self) {
-        let mut table = Table::new();
-        table
-            .load_preset(UTF8_FULL)
-            .set_content_arrangement(ContentArrangement::Dynamic)
-            .set_table_width(utils::get_term_width())
-            .set_header(vec![
-                Cell::new("ID"),
-                Cell::new("ID A"),
-                Cell::new("Alias List A"),
-                Cell::new("ID B"),
-                Cell::new("Alias List B"),
-                Cell::new("Last modified"),
-            ]);
+        if self.data.len() == 0 {
+            println!("Found nothing.");
+        } else {
+            let mut table = Table::new();
+            table
+                .load_preset(UTF8_FULL)
+                .set_content_arrangement(ContentArrangement::Dynamic)
+                .set_table_width(utils::get_term_width())
+                .set_header(vec![
+                    Cell::new("ID"),
+                    Cell::new("ID A"),
+                    Cell::new("Alias List A"),
+                    Cell::new("ID B"),
+                    Cell::new("Alias List B"),
+                    Cell::new("Last modified"),
+                ]);
 
-        for entity in &self.data {
-            table.add_row(vec![
-                Cell::new(&entity.id),
-                Cell::new(&entity.entity_id_a),
-                Cell::new(&entity.alias_list_a),
-                Cell::new(&entity.entity_id_b),
-                Cell::new(&entity.alias_list_b),
-                Cell::new(&entity.updated.format(Format::Rfc3339)),
-            ]);
+            for entity in &self.data {
+                table.add_row(vec![
+                    Cell::new(&entity.id),
+                    Cell::new(&entity.entity_id_a),
+                    Cell::new(&entity.alias_list_a),
+                    Cell::new(&entity.entity_id_b),
+                    Cell::new(&entity.alias_list_b),
+                    Cell::new(&entity.updated.format(Format::Rfc3339)),
+                ]);
+            }
+
+            println!("{}", table);
         }
-
-        println!("{}", table);
     }
 }
 
 impl ComfyTable for ComfyStruct<RelationSnippet> {
     fn print_comfy_table(&self) {
-        let mut table = Table::new();
-        table
-            .load_preset(UTF8_FULL)
-            .set_content_arrangement(ContentArrangement::Dynamic)
-            .set_table_width(utils::get_term_width())
-            .set_header(vec![
-                Cell::new("Snippets"),
-                Cell::new("ID"),
-                Cell::new("Last modified"),
-            ]);
+        if self.data.len() == 0 {
+            println!("Found nothing.");
+        } else {
+            let mut table = Table::new();
+            table
+                .load_preset(UTF8_FULL)
+                .set_content_arrangement(ContentArrangement::Dynamic)
+                .set_table_width(utils::get_term_width())
+                .set_header(vec![
+                    Cell::new("Snippets"),
+                    Cell::new("ID"),
+                    Cell::new("Last modified"),
+                ]);
 
-        for entity in &self.data {
-            table.add_row(vec![
-                Cell::new(&entity.data),
-                Cell::new(&entity.id),
-                Cell::new(&entity.updated.format(Format::Rfc3339)),
-            ]);
+            for entity in &self.data {
+                table.add_row(vec![
+                    Cell::new(&entity.data),
+                    Cell::new(&entity.id),
+                    Cell::new(&entity.updated.format(Format::Rfc3339)),
+                ]);
+            }
+
+            println!("{}", table);
         }
-
-        println!("{}", table);
     }
 }
 
 impl ComfyTable for ComfyStruct<EntityFound> {
     fn print_comfy_table(&self) {
-        let mut table = Table::new();
-        table
-            .load_preset(UTF8_FULL)
-            .set_content_arrangement(ContentArrangement::Dynamic)
-            .set_table_width(utils::get_term_width())
-            .set_header(vec![
-                Cell::new("Name"),
-                Cell::new("ID"),
-                Cell::new("Entity ID"),
-                Cell::new("Updated"),
-            ]);
+        if self.data.len() == 0 {
+            println!("Found nothing.");
+        } else {
+            let mut table = Table::new();
+            table
+                .load_preset(UTF8_FULL)
+                .set_content_arrangement(ContentArrangement::Dynamic)
+                .set_table_width(utils::get_term_width())
+                .set_header(vec![
+                    Cell::new("Name"),
+                    Cell::new("ID"),
+                    Cell::new("Entity ID"),
+                    Cell::new("Updated"),
+                ]);
 
-        for entity in &self.data {
-            table.add_row(vec![
-                Cell::new(&entity.name),
-                Cell::new(&entity.id),
-                Cell::new(&entity.entity_id),
-                Cell::new(&entity.updated.format(Format::Rfc3339)),
-            ]);
+            for entity in &self.data {
+                table.add_row(vec![
+                    Cell::new(&entity.name),
+                    Cell::new(&entity.id),
+                    Cell::new(&entity.entity_id),
+                    Cell::new(&entity.updated.format(Format::Rfc3339)),
+                ]);
+            }
+
+            println!("{}", table);
         }
-
-        println!("{}", table);
     }
 }
 
 impl ComfyTable for ComfyStruct<EntityFoundLong> {
     fn print_comfy_table(&self) {
-        let mut table = Table::new();
-        table
-            .load_preset(UTF8_FULL)
-            .set_content_arrangement(ContentArrangement::Dynamic)
-            .set_table_width(utils::get_term_width())
-            .set_header(vec![
-                Cell::new("Name"),
-                Cell::new("ID"),
-                Cell::new("Entity ID"),
-                Cell::new("Other Aliases"),
-                Cell::new("Updated"),
-            ]);
+        if self.data.len() == 0 {
+            println!("Found nothing.");
+        } else {
+            let mut table = Table::new();
+            table
+                .load_preset(UTF8_FULL)
+                .set_content_arrangement(ContentArrangement::Dynamic)
+                .set_table_width(utils::get_term_width())
+                .set_header(vec![
+                    Cell::new("Name"),
+                    Cell::new("ID"),
+                    Cell::new("Entity ID"),
+                    Cell::new("Other Aliases"),
+                    Cell::new("Updated"),
+                ]);
 
-        for entity in &self.data {
-            table.add_row(vec![
-                Cell::new(&entity.name),
-                Cell::new(&entity.id),
-                Cell::new(&entity.entity_id),
-                Cell::new(&entity.other_alias),
-                Cell::new(&entity.updated.format(Format::Rfc3339)),
-            ]);
+            for entity in &self.data {
+                table.add_row(vec![
+                    Cell::new(&entity.name),
+                    Cell::new(&entity.id),
+                    Cell::new(&entity.entity_id),
+                    Cell::new(&entity.other_alias),
+                    Cell::new(&entity.updated.format(Format::Rfc3339)),
+                ]);
+            }
+
+            println!("{}", table);
         }
-
-        println!("{}", table);
     }
 }
 
 impl ComfyTable for ComfyStruct<SnippetFound> {
     fn print_comfy_table(&self) {
-        let mut table = Table::new();
-        table
-            .load_preset(UTF8_FULL)
-            .set_content_arrangement(ContentArrangement::Dynamic)
-            .set_table_width(utils::get_term_width())
-            .set_header(vec![
-                Cell::new("Snippets"),
-                Cell::new("ID"),
-                Cell::new("Entity ID"),
-                Cell::new("Last modified"),
-            ]);
+        if self.data.len() == 0 {
+            println!("Found nothing.");
+        } else {
+            let mut table = Table::new();
+            table
+                .load_preset(UTF8_FULL)
+                .set_content_arrangement(ContentArrangement::Dynamic)
+                .set_table_width(utils::get_term_width())
+                .set_header(vec![
+                    Cell::new("Snippets"),
+                    Cell::new("ID"),
+                    Cell::new("Entity ID"),
+                    Cell::new("Last modified"),
+                ]);
 
-        for entity in &self.data {
-            table.add_row(vec![
-                Cell::new(&entity.data),
-                Cell::new(&entity.id),
-                Cell::new(&entity.entity_id),
-                Cell::new(&entity.updated.format(Format::Rfc3339)),
-            ]);
+            for entity in &self.data {
+                table.add_row(vec![
+                    Cell::new(&entity.data),
+                    Cell::new(&entity.id),
+                    Cell::new(&entity.entity_id),
+                    Cell::new(&entity.updated.format(Format::Rfc3339)),
+                ]);
+            }
+
+            println!("{}", table);
         }
-
-        println!("{}", table);
     }
 }
 
 impl ComfyTable for ComfyStruct<RelationSnippetFound> {
     fn print_comfy_table(&self) {
-        let mut table = Table::new();
-        table
-            .load_preset(UTF8_FULL)
-            .set_content_arrangement(ContentArrangement::Dynamic)
-            .set_table_width(utils::get_term_width())
-            .set_header(vec![
-                Cell::new("Snippets"),
-                Cell::new("ID"),
-                Cell::new("Relation ID"),
-                Cell::new("Last modified"),
-            ]);
+        if self.data.len() == 0 {
+            println!("Found nothing.");
+        } else {
+            let mut table = Table::new();
+            table
+                .load_preset(UTF8_FULL)
+                .set_content_arrangement(ContentArrangement::Dynamic)
+                .set_table_width(utils::get_term_width())
+                .set_header(vec![
+                    Cell::new("Snippets"),
+                    Cell::new("ID"),
+                    Cell::new("Relation ID"),
+                    Cell::new("Last modified"),
+                ]);
 
-        for entity in &self.data {
-            table.add_row(vec![
-                Cell::new(&entity.data),
-                Cell::new(&entity.id),
-                Cell::new(&entity.relation_id),
-                Cell::new(&entity.updated.format(Format::Rfc3339)),
-            ]);
+            for entity in &self.data {
+                table.add_row(vec![
+                    Cell::new(&entity.data),
+                    Cell::new(&entity.id),
+                    Cell::new(&entity.relation_id),
+                    Cell::new(&entity.updated.format(Format::Rfc3339)),
+                ]);
+            }
+
+            println!("{}", table);
         }
-
-        println!("{}", table);
     }
 }
 
 impl ComfyTable for ComfyStruct<Stats> {
     fn print_comfy_table(&self) {
-        let mut table = Table::new();
-        table
-            .load_preset(UTF8_FULL)
-            .set_content_arrangement(ContentArrangement::Dynamic)
-            .set_table_width(utils::get_term_width())
-            .set_header(vec![Cell::new("Type"), Cell::new("Count")]);
+        if self.data.len() == 0 {
+            println!("Found nothing.");
+        } else {
+            let mut table = Table::new();
+            table
+                .load_preset(UTF8_FULL)
+                .set_content_arrangement(ContentArrangement::Dynamic)
+                .set_table_width(utils::get_term_width())
+                .set_header(vec![Cell::new("Type"), Cell::new("Count")]);
 
-        for entity in &self.data {
-            table.add_row(vec![Cell::new(&entity.stat_type), Cell::new(&entity.count)]);
+            for entity in &self.data {
+                table.add_row(vec![Cell::new(&entity.stat_type), Cell::new(&entity.count)]);
+            }
+
+            println!("{}", table);
         }
-
-        println!("{}", table);
     }
 }
