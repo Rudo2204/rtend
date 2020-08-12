@@ -7,13 +7,7 @@ name: CI
 env:
   CRATE_NAME: rtend
 
-on:
-  push:
-    branches:
-      - master
-    tags:
-      - 'v*' # matches v0.2, v1.0, v2.15.23, ect.
-  pull_request:
+on: [push, pull_request]
 
 jobs:
   lints:
