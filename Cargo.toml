@@ -28,3 +28,9 @@ term_size = "1.0.0-beta1"
 
 [target.'cfg(unix)'.dependencies]
 skim = "0.8"
+
+[profile.release]
+lto = true
+opt-level = "z"
+codegen-units = 1
+panic = "abort"
