@@ -9,7 +9,7 @@ It's basically a simple rust wrapper for sqlite, it makes a nice CLI note taking
 
 ## Usage
 ```
-rtend 0.2.0
+rtend 0.2.1
 rudo2204 <rudo2204@gmail.com>
 Simple CLI note taking program
 
