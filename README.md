@@ -1,3 +1,6 @@
+# Deprecated
+I have switched to using [Obsidian](https://obsidian.md/).
+
 # rtend
 > My memory is so bad I need to take notes
 
